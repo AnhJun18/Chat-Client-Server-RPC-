@@ -81,8 +81,7 @@ public class UICilent {
                 while(true){
                     try{
                         if(myClient.gibStatus()) {
-                         	System.out.println(myClient.gibStatus()+"LLLLLL");
-                        	System.out.println("cccccc"+myClient.gibMsg());
+                        	System.out.println("rep:"+myClient.gibMsg());
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
                         	lblNewLabel.setBounds(50, 17, 309, 56);
                     		panel.add(lblNewLabel);
@@ -126,12 +125,12 @@ public class UICilent {
 	
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * JLabel lblNewLabel = new JLabel(textMsg.getText()); lblNewLabel.setBounds(10,
-				 * 20, 45, 13); panel.add(lblNewLabel); clientP.broadcast(textMsg.getText(),
-				 * myClient); textMsg.setText(null); panel.repaint();
-				 */
-				myClient.setStatus(false);
+				
+				  JLabel lblNewLabel = new JLabel(textMsg.getText()); lblNewLabel.setBounds(10,
+				 20, 45, 13); panel.add(lblNewLabel); clientP.broadcast(textMsg.getText(),
+				  myClient); textMsg.setText(null); panel.repaint();
+				 
+				
 			}
 		});
 	
