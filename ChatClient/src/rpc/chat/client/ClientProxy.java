@@ -65,7 +65,7 @@ public class ClientProxy implements IServer {
 
 		try {
 			input.readLine();
-			output.println("169.254.22.126");
+			output.println("127.0.0.1");
 			output.flush();
 			
 			input.readLine();
