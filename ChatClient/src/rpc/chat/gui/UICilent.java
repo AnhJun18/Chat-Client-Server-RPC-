@@ -32,7 +32,7 @@ public class UICilent {
 	private JPanel panel;
 	private ClientProxy clientP;
 	 Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
-	private JComboBox<String> comboBox;
+	private JComboBox comboBox;
 	private Client myClient ;
 	private JPanel panel_chat;
 	private JScrollPane scrollPane_1;
@@ -84,6 +84,8 @@ public class UICilent {
                 while(true){
                     try{
                     	Thread.sleep(500);
+                    	System.out.println(myClient.gibStatus()+" + "+myClient.getStatusMember());
+                    	Thread.sleep(500);
                         if(myClient.gibStatus()) {
                         	num++;
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
@@ -95,7 +97,8 @@ public class UICilent {
                         if(myClient.getStatusMember()) {
                         	 comboBox.removeAllItems();
                         	 for (String client: myClient.getMember()) { 
-                        		 comboBox.addItem("|||");
+                        		 System.out.println(client+"______");
+                        		 comboBox.addItem(client);
                         		 System.out.println(client+"|||");
            					  }	
                         	 myClient.setStatusMember(false); 
@@ -104,7 +107,7 @@ public class UICilent {
                         }
   
                     }catch(Exception e){
-                        System.err.println(e.getMessage());
+                        System.err.println("C++++++"+e.getMessage());
                     }
                 }
             }
