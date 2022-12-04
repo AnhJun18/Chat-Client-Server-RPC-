@@ -50,7 +50,7 @@ public class ClientProxy implements IServer {
 			output.println(msg);
 			output.println(receiver);
 			output.flush();
-
+			
 			evaluateErrorCode();
 
 		} catch (Exception e) {

@@ -102,7 +102,6 @@ public class ServerSideClientProxy implements IClient {
 			System.out.println(input.readLine());
 			output.println(member);
 			output.flush();
-
 			evaluateErrorCode();
 
 		} catch (Exception e) {
