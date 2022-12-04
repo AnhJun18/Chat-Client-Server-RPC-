@@ -14,7 +14,6 @@ public class ClientProxy implements IServer {
 
 	BufferedReader input;
 	PrintWriter output;
-	
 	RPCRuntime rpc;
 
 	public ClientProxy(String host, int port, RPCRuntime rpc) throws Exception {
@@ -23,7 +22,6 @@ public class ClientProxy implements IServer {
 
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		output = new PrintWriter(socket.getOutputStream());
-
 		int size = Integer.parseInt(input.readLine());
 
 		for (int i = 0; i < size; i++) {
@@ -46,7 +44,6 @@ public class ClientProxy implements IServer {
 		try {
 
 			input.readLine();
-
 			output.println(msg);
 			output.println(receiver);
 			output.flush();

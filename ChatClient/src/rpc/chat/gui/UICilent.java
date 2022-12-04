@@ -77,7 +77,7 @@ public class UICilent {
 	public UICilent() throws Exception {
 	
 		System.out.println("-- UI --");
-		myClient = new Client("MANH2");
+		myClient = new Client("MANH");
 		System.out.println();
 		RPCRuntime rpc = new RPCRuntime(new ServerSocket(9090));
 		rpc.register("ChatClient", new IProxyFactory() {
@@ -103,12 +103,12 @@ public class UICilent {
                     	Thread.sleep(500);
                         if(myClient.gibStatus()) {
                         	num++;
+                        	System.out.print(myClient.gibMsg()+"    "+ mode);
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
-                        	JPanel newPanel = listPanel.get(mode);
-                        	newPanel.add(lblNewLabel);
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                        	 listPanel.put(mode,newPanel);
+                        	listPanel.get(mode).add(lblNewLabel);
                         	 System.out.print(mode);
+                        	 
                         	 listPanel.get(mode).repaint();
                     		myClient.setStatus(false);
                         }
@@ -128,7 +128,11 @@ public class UICilent {
         }).start();
     }
 	private void addPanel(String name) {
-		JPanel panel_chat_new = createPanelChat();
+		JPanel panel_chat_new = new JPanel();
+		panel_chat_new.setBounds(0, 44, 448, 1000);	
+		panel_chat_new.setLayout(null);
+		scrollPane_1.setAutoscrolls(true);
+		scrollPane_1.setViewportView(panel_chat_new);
 	    listPanel.put(name, panel_chat_new);
 	}
 	private JPanel createPanelChat() {
@@ -200,14 +204,19 @@ public class UICilent {
 				System.out.println("222222222");
 				listPanel.get(mode).setVisible(false);
 				mode=(String)comboBox.getSelectedItem();
+				
 				if(!listPanel.containsKey(mode)){
 					System.out.println("444444444444");
 			    addPanel(mode);
 			    listPanel.get(mode).setVisible(true);
+			    scrollPane_1.setViewportView(listPanel.get(mode));
+				listPanel.get(mode).repaint(); 
 		}
 				else {
 					System.out.println("111111333333333333111111111");
 				listPanel.get(mode).setVisible(true);
+				scrollPane_1.setViewportView(listPanel.get(mode));
+				listPanel.get(mode).repaint(); 
 				}
 				/* panel.setVisible(false); */
 			}
@@ -222,10 +231,8 @@ public class UICilent {
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
 					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-					System.out.println(mode);
-					JPanel newPanel =listPanel.get(mode);
-					newPanel.add(lblNewLabel);
-					listPanel.put(mode,newPanel);
+					listPanel.get(mode).add(lblNewLabel);
+				  System.out.println(listPanel.get(mode).toString());
 				  clientP.broadcast(textMsg.getText(),myClient,mode); 
 				  textMsg.setText(null);
 				  listPanel.get(mode).repaint(); 

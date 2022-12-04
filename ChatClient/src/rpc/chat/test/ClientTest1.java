@@ -1,7 +1,5 @@
-package rpc.chat.gui.copy;
-
+package rpc.chat.test;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -42,7 +40,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.SwingConstants;
 
-public class UICilent {
+public class ClientTest1 {
 
 	private JFrame frame;
 	private JPanel panel;
@@ -61,7 +59,7 @@ public class UICilent {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UICilent window = new UICilent();
+					ClientTest1 window = new ClientTest1();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,12 +72,12 @@ public class UICilent {
 	/**
 	 * Create the application.
 	 */
-	public UICilent() throws Exception {
+	public ClientTest1() throws Exception {
 	
 		System.out.println("-- UI --");
-		myClient = new Client("MANH1");
+		myClient = new Client("TEST");
 		System.out.println();
-		RPCRuntime rpc = new RPCRuntime(new ServerSocket(6666));
+		RPCRuntime rpc = new RPCRuntime(new ServerSocket(8090));
 		rpc.register("ChatClient", new IProxyFactory() {
 			@Override
 			public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
@@ -88,7 +86,7 @@ public class UICilent {
 		});
 		(new Thread(rpc)).start();
 
-		clientP = new ClientProxy("localhost",8080, rpc);
+		clientP = new ClientProxy("localhost", 8080, rpc);
 		clientP.anmelden(myClient);
 		initialize();
 		listenForMessages();
@@ -103,12 +101,12 @@ public class UICilent {
                     	Thread.sleep(500);
                         if(myClient.gibStatus()) {
                         	num++;
+                        	System.out.print(myClient.gibMsg()+"    "+ mode);
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
-                        	JPanel newPanel = listPanel.get(mode);
-                        	newPanel.add(lblNewLabel);
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                        	 listPanel.put(mode,newPanel);
+                        	listPanel.get(mode).add(lblNewLabel);
                         	 System.out.print(mode);
+                        	 
                         	 listPanel.get(mode).repaint();
                     		myClient.setStatus(false);
                         }
@@ -128,7 +126,11 @@ public class UICilent {
         }).start();
     }
 	private void addPanel(String name) {
-		JPanel panel_chat_new = createPanelChat();
+		JPanel panel_chat_new = new JPanel();
+		panel_chat_new.setBounds(0, 44, 448, 1000);	
+		panel_chat_new.setLayout(null);
+		scrollPane_1.setAutoscrolls(true);
+		scrollPane_1.setViewportView(panel_chat_new);
 	    listPanel.put(name, panel_chat_new);
 	}
 	private JPanel createPanelChat() {
@@ -151,13 +153,13 @@ public class UICilent {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientTest1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientTest1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientTest1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientTest1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
        
 		frame = new JFrame();
@@ -200,14 +202,19 @@ public class UICilent {
 				System.out.println("222222222");
 				listPanel.get(mode).setVisible(false);
 				mode=(String)comboBox.getSelectedItem();
+				
 				if(!listPanel.containsKey(mode)){
 					System.out.println("444444444444");
 			    addPanel(mode);
 			    listPanel.get(mode).setVisible(true);
+			    scrollPane_1.setViewportView(listPanel.get(mode));
+				listPanel.get(mode).repaint(); 
 		}
 				else {
 					System.out.println("111111333333333333111111111");
 				listPanel.get(mode).setVisible(true);
+				scrollPane_1.setViewportView(listPanel.get(mode));
+				listPanel.get(mode).repaint(); 
 				}
 				/* panel.setVisible(false); */
 			}
@@ -222,11 +229,9 @@ public class UICilent {
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
 					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-					System.out.println(mode);
-					JPanel newPanel =listPanel.get(mode);
-					newPanel.add(lblNewLabel);
-					listPanel.put(mode,newPanel);
-				  clientP.broadcast(textMsg.getText(), myClient,mode); 
+					listPanel.get(mode).add(lblNewLabel);
+				  System.out.println(listPanel.get(mode).toString());
+				  clientP.broadcast(textMsg.getText(),myClient,mode); 
 				  textMsg.setText(null);
 				  listPanel.get(mode).repaint(); 
 			}
