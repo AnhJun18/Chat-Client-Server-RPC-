@@ -1,12 +1,16 @@
 package rpc.chat.client;
+import javax.swing.text.Utilities;
 
 import rpc.chat.interfaces.IClient;
 
 public class Client implements IClient {
 	
 	String name;
+	boolean newMember=false;
+	String[] listMember=null;
 	boolean newMsg;
 	String msg;
+	
 	
 	public Client(String name) {
 		this.name = name;
@@ -26,6 +30,14 @@ public class Client implements IClient {
 		return name;
 	}
 	
+	
+	@Override
+	public void updateMember(String clients) {
+		System.out.println(clients);
+		listMember=clients.split("\\+");
+		newMember=true;
+	}
+
 	public boolean gibStatus() {
 		return newMsg;
 	}
@@ -38,6 +50,16 @@ public class Client implements IClient {
 		return msg;
 	}
 	
-
+	public String[] getMember() {
+		return listMember;
+	}
+	
+	public void setStatusMember(boolean st) {
+		this.newMember=st;
+	}
+	
+	public boolean getStatusMember() {
+		return newMember;
+	}
 
 }

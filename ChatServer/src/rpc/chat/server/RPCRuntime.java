@@ -28,22 +28,17 @@ public class RPCRuntime implements Runnable {
 			try {
 				
 				Socket input = socket.accept();
-				
 				PrintWriter pw = new PrintWriter(input.getOutputStream());
 				pw.println(factories.size());
 				for (String name : factories.keySet()) {
 					pw.println(name);
 				}
 				pw.flush();
-				
 				BufferedReader br = new BufferedReader(new InputStreamReader(input.getInputStream()));
 				String proxyName = br.readLine();
-				
-				if (factories.containsKey(proxyName)) {
-					
+				if (factories.containsKey(proxyName)) {		
 					IProxy p = factories.get(proxyName).createProxy(br, pw);
 					(new Thread(p)).start();
-				
 				} else {
 
 					pw.println("404 - Proxy Not Found");

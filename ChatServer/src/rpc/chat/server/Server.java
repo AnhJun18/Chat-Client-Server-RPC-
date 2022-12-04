@@ -11,16 +11,34 @@ public class Server implements IServer {
 
 	@Override
 	//phát tin
-	public void broadcast(String msg, IClient client) {
-		
-		for (IClient iClient : clients) {
-			// �ber Leiche gehen und die dann "beerdigen"
-			try {
-				iClient.empfangen(client.gibName() + " viết: " + msg);
-			} catch (Exception e) {
-				this.abmelden(iClient);
+	public void broadcast(String msg, IClient client,String receiver) {
+		if(receiver.equals("ALL")) {
+			for (IClient iClient : clients) {
+				try {
+					if(!iClient.gibName().equals(client.gibName()))
+						iClient.empfangen(client.gibName() + ": " + msg);
+				} catch (Exception e) {
+					this.abmelden(iClient);
+				}
 			}
-		}
+		 }
+		else {
+			 for (IClient iClient : clients) {
+					try {
+						if(iClient.gibName().equals(receiver))
+							iClient.empfangen(client.gibName() + ": " + msg);
+					}catch (Exception e) {
+						this.abmelden(iClient);
+					}
+				}
+		 }
+		
+	}
+	public String getAllMember() {
+		String listMember = "";
+		for (IClient iClient : clients) 
+			listMember.concat("+"+iClient.gibName());
+		return listMember;
 	}
 
 
@@ -28,7 +46,16 @@ public class Server implements IServer {
 	@Override
 	public void anmelden(IClient client) {
 		clients.add(client);
-
+	}
+	
+	public void updateMember() {
+		String listMember = "ALL";
+		for (IClient iClient : clients) {
+			listMember+="+"+iClient.gibName();
+		}
+		for (IClient iClient : clients) {
+			iClient.updateMember(listMember);
+		}
 	}
 
 	//đăng xuất

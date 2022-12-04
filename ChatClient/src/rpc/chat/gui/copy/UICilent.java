@@ -1,4 +1,4 @@
-package rpc.chat.gui;
+package rpc.chat.gui.copy;
 
 import java.awt.EventQueue;
 
@@ -74,9 +74,9 @@ public class UICilent {
 	public UICilent() throws Exception {
 		
 		System.out.println("-- UI --");
-		myClient = new Client("JUN");
+		myClient = new Client("PA");
 		System.out.println();
-		RPCRuntime rpc = new RPCRuntime(new ServerSocket(6666));
+		RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
 		rpc.register("ChatClient", new IProxyFactory() {
 			@Override
 			public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
@@ -101,7 +101,6 @@ public class UICilent {
                         if(myClient.gibStatus()) {
                         	num++;
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
-              
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
                     		panel_chat.add(lblNewLabel);
                     		panel_chat.repaint();
@@ -159,7 +158,6 @@ public class UICilent {
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mode=(String)comboBox.getSelectedItem();
-				/* panel.setVisible(false); */
 			}
 		});
 		
@@ -192,7 +190,7 @@ public class UICilent {
 				  JLabel lblNewLabel = new JLabel(textMsg.getText());
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
-					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+				 lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 				  panel_chat.add(lblNewLabel);
 				  clientP.broadcast(textMsg.getText(), myClient,mode); 
 				  textMsg.setText(null);

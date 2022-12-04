@@ -1,5 +1,7 @@
 package rpc.chat.server;
 
+import java.util.ArrayList;
+
 import rpc.chat.interfaces.IClient;
 
 public class LocalClient implements IClient {
@@ -11,13 +13,19 @@ public class LocalClient implements IClient {
 	
 	@Override
 	public void empfangen(String msg) {
-		System.out.println(name + " hört : " + msg);
+		System.out.println(name + " hï¿½rt : " + msg);
 
 	}
 
 	@Override
 	public String gibName() {
 		return name;
+	}
+
+	@Override
+	public void updateMember(String clients) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

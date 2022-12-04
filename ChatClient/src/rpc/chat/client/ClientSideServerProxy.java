@@ -51,6 +51,23 @@ public class ClientSideServerProxy implements Runnable, IProxy {
 		out.flush();
 
 	}
+	
+	private void updateMember() {
+		try {
+			out.println("Update Memeber");
+			out.flush();
+			client.updateMember(in.readLine());
+			out.println("200 - Success");
+
+		} catch (Exception e) {
+
+			out.println("500 - Internal Server Error");
+			out.println(e.getMessage());
+
+		}
+		out.flush();
+
+	}
 
 	public void run() {
 		while (running) {
@@ -67,6 +84,9 @@ public class ClientSideServerProxy implements Runnable, IProxy {
 
 				case "2":
 					this.gibName();
+					break;
+				case "3":
+					this.updateMember();
 					break;
 
 				default:

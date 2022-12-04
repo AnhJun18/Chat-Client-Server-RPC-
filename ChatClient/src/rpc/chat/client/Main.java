@@ -25,12 +25,11 @@ public class Main {
 
 		ClientProxy clientP = new ClientProxy("localhost", 8080, rpc);
 		clientP.anmelden(client);
-		clientP.broadcast("testMsg", client);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String msg;
 		
 		while (!((msg = br.readLine()).equals("quit"))) {
-			clientP.broadcast(msg, client);
+			clientP.broadcast(msg, client,"JUN");
 		}
 		
 		clientP.abmelden(client);

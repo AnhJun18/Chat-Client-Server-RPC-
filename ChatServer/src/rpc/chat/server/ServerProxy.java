@@ -2,6 +2,7 @@ package rpc.chat.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import rpc.chat.interfaces.IProxy;
 
@@ -19,16 +20,17 @@ public class ServerProxy implements Runnable, IProxy {
 		this.server = (Server) server;
 		this.in = in;
 		this.out = out;
+		//System.out.println("5"); 
 	}
 
 	private void broadcast() {
 		try {
-			
 			out.println("Gib mir deine Nachricht!");
 			out.flush();
 			String msg = in.readLine();
+			String receiver = in.readLine();
 			
-			server.broadcast(msg, lc);
+			server.broadcast(msg, lc,receiver);
 			out.println("200 - Success");
 			
 		} catch (Exception e) {
@@ -57,16 +59,15 @@ public class ServerProxy implements Runnable, IProxy {
 			
 			server.anmelden(lc);
 			out.println("200 - Success");
-
+			
 		} catch (Exception e) {
 			
 			out.println("500 - Internal Server Error");
 			out.println(e.getClass().getName());
 			
 		}
-		
 		out.flush();
-
+		server.updateMember();
 	}
 
 	private void abmelden() throws IOException {

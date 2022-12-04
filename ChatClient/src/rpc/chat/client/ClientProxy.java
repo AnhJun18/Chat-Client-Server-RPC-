@@ -39,7 +39,7 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void broadcast(String msg, IClient client) {
+	public void broadcast(String msg, IClient client, String receiver) {
 		output.println("1");
 		output.flush();
 
@@ -48,6 +48,7 @@ public class ClientProxy implements IServer {
 			input.readLine();
 
 			output.println(msg);
+			output.println(receiver);
 			output.flush();
 
 			evaluateErrorCode();
@@ -64,16 +65,17 @@ public class ClientProxy implements IServer {
 		output.flush();
 
 		try {
-			input.readLine();
+			System.out.println(input.readLine());
 			output.println("127.0.0.1");
 			output.flush();
 			
 			input.readLine();
 			output.println(rpc.socket.getLocalPort());
 			output.flush();
-
+			
 			evaluateErrorCode();
-
+		
+		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

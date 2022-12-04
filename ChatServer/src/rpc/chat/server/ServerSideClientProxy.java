@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import rpc.chat.interfaces.IClient;
 import rpc.chat.interfaces.IServer;
@@ -90,5 +91,23 @@ public class ServerSideClientProxy implements IClient {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void updateMember(String member) {
+		output.println("3");
+		output.flush();
+
+		try {
+			System.out.println(input.readLine());
+			output.println(member);
+			output.flush();
+
+			evaluateErrorCode();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 }
