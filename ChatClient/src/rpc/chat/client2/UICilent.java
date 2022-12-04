@@ -1,22 +1,23 @@
 package rpc.chat.client2;
 
+import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.Hashtable;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
-import javax.swing.JTextArea;
-import javax.swing.BoxLayout;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 import rpc.chat.client.Client;
 import rpc.chat.client.ClientProxy;
@@ -25,34 +26,18 @@ import rpc.chat.client.RPCRuntime;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory;
 
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.FlowLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.LineBorder;
-import java.awt.ScrollPane;
-import java.awt.Panel;
-import java.awt.TextField;
-import javax.swing.JList;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-import javax.swing.SwingConstants;
-
 public class UICilent {
 
 	private JFrame frame;
 	private JPanel panel;
 	private ClientProxy clientP;
 	 Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	private Client myClient ;
 	private JPanel panel_chat;
 	private JScrollPane scrollPane_1;
 	String mode="ALL";
+	boolean isupdate=false;
 	int num=0;
 	/**
 	 * Launch the application.
@@ -76,9 +61,9 @@ public class UICilent {
 	 */
 	public UICilent() throws Exception {
 	
-		System.out.println("-- UI 2--");
+		System.out.println("-- UI --");
 		myClient = new Client("PA");
-		RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
+		RPCRuntime rpc = new RPCRuntime(new ServerSocket(6666));
 		rpc.register("ChatClient", new IProxyFactory() {
 			@Override
 			public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
@@ -104,18 +89,20 @@ public class UICilent {
                         	num++;
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                        	listPanel.get(mode).add(lblNewLabel);
-                        	 System.out.print(mode);
-                        	 
-                        	 listPanel.get(mode).repaint();
+                        	String sender=myClient.gibMsg().split(":")[0];
+                        	listPanel.get(sender).add(lblNewLabel); 
+                        	listPanel.get(sender).repaint();
                     		myClient.setStatus(false);
                         }
                         if(myClient.getStatusMember()) {
-                        	comboBox.removeAllItems();
-                        	 for (String client: myClient.getMember()) { 
-                        		 comboBox.addItem(client);
+                        	isupdate=true;
+                        	 comboBox.removeAllItems();
+                        	 for (String client: myClient.getMember()) {                 
+								 comboBox.addItem(client); 
            					  }	
-                        	 myClient.setStatusMember(false);
+                        	 myClient.setStatusMember(false); 
+                        	 comboBox.setSelectedItem(mode);
+                        	 isupdate=false;
                         }
   
                     }catch(Exception e){
@@ -132,14 +119,6 @@ public class UICilent {
 		scrollPane_1.setAutoscrolls(true);
 		scrollPane_1.setViewportView(panel_chat_new);
 	    listPanel.put(name, panel_chat_new);
-	}
-	private JPanel createPanelChat() {
-		JPanel panel_chat_new = new JPanel();
-		panel_chat_new.setBounds(0, 44, 448, 1000);	
-		panel_chat_new.setLayout(null);
-		scrollPane_1.setAutoscrolls(true);
-		scrollPane_1.setViewportView(panel_chat);
-		return panel_chat_new;
 	}
 	/**
 	 * Initialize the contents of the frame.
@@ -195,23 +174,24 @@ public class UICilent {
 		scrollPane_1.setAutoscrolls(true);
 		scrollPane_1.setViewportView(panel_chat);
 		listPanel.put("ALL",panel_chat);
-		comboBox = new JComboBox();
+		
+		JLabel lblNewLabel_1 = new JLabel(myClient.gibName());
+		lblNewLabel_1.setBounds(99, 0, 231, 34);
+		panel.add(lblNewLabel_1);
+		comboBox = new JComboBox<String>();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPanel.get(mode).setVisible(false);
-				mode=(String)comboBox.getSelectedItem();
-				
-				if(!listPanel.containsKey(mode)){
-			    addPanel(mode);
-			    listPanel.get(mode).setVisible(true);
-			    scrollPane_1.setViewportView(listPanel.get(mode));
-				listPanel.get(mode).repaint(); 
-		}
-				else {
-				listPanel.get(mode).setVisible(true);
-				scrollPane_1.setViewportView(listPanel.get(mode));
-				listPanel.get(mode).repaint(); 
+				if(isupdate==false) {
+				  listPanel.get(mode).setVisible(false);
+				  mode=(String)comboBox.getSelectedItem();
+				  if(!listPanel.containsKey(mode)){ addPanel(mode);
+				  listPanel.get(mode).setVisible(true);
+				  scrollPane_1.setViewportView(listPanel.get(mode));
+				  listPanel.get(mode).repaint(); } else { listPanel.get(mode).setVisible(true);
+				  scrollPane_1.setViewportView(listPanel.get(mode));
+				  listPanel.get(mode).repaint(); }
 				}
+				 
 			}
 		});
 		
@@ -220,12 +200,13 @@ public class UICilent {
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				num=0;
 				  JLabel lblNewLabel = new JLabel(textMsg.getText());
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
 					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 					listPanel.get(mode).add(lblNewLabel);
-				  System.out.println("<<<<<"+listPanel.get(mode).toString());
+				  System.out.println(listPanel.get(mode).toString());
 				  clientP.broadcast(textMsg.getText(),myClient,mode); 
 				  textMsg.setText(null);
 				  listPanel.get(mode).repaint(); 
@@ -235,5 +216,4 @@ public class UICilent {
 		
 		
 	}
-
 }

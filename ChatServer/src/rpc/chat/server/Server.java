@@ -16,7 +16,7 @@ public class Server implements IServer {
 			for (IClient iClient : clients) {
 				try {
 					if(!iClient.gibName().equals(client.gibName()))
-						iClient.empfangen(client.gibName() + ": " + msg);
+						iClient.empfangen("ALL" + ": " + msg);
 				} catch (Exception e) {
 					this.abmelden(iClient);
 				}

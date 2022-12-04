@@ -32,11 +32,12 @@ public class UICilent {
 	private JPanel panel;
 	private ClientProxy clientP;
 	 Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	private Client myClient ;
 	private JPanel panel_chat;
 	private JScrollPane scrollPane_1;
 	String mode="ALL";
+	boolean isupdate=false;
 	int num=0;
 	/**
 	 * Launch the application.
@@ -60,8 +61,8 @@ public class UICilent {
 	 */
 	public UICilent() throws Exception {
 	
-		System.out.println("-- UI --");
-		myClient = new Client("MANH");
+		System.out.println("-- UI chính --");
+		myClient = new Client("JUN");
 		RPCRuntime rpc = new RPCRuntime(new ServerSocket(9090));
 		rpc.register("ChatClient", new IProxyFactory() {
 			@Override
@@ -84,30 +85,28 @@ public class UICilent {
                 while(true){
                     try{
                     	Thread.sleep(500);
-                    	System.out.println(myClient.gibStatus()+" + "+myClient.getStatusMember());
-                    	Thread.sleep(500);
                         if(myClient.gibStatus()) {
                         	num++;
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                        	listPanel.get(mode).add(lblNewLabel); 
-                        	listPanel.get(mode).repaint();
+                        	String sender=myClient.gibMsg().split(":")[0];
+                        	listPanel.get(sender).add(lblNewLabel); 
+                        	listPanel.get(sender).repaint();
                     		myClient.setStatus(false);
                         }
                         if(myClient.getStatusMember()) {
+                        	isupdate=true;
                         	 comboBox.removeAllItems();
-                        	 for (String client: myClient.getMember()) { 
-                        		 System.out.println(client+"______");
-                        		 comboBox.addItem(client);
-                        		 System.out.println(client+"|||");
+                        	 for (String client: myClient.getMember()) {                 
+								 comboBox.addItem(client); 
            					  }	
                         	 myClient.setStatusMember(false); 
-                        	
-                        	 System.out.println("KKKKKKK");
+                        	 comboBox.setSelectedItem(mode);
+                        	 isupdate=false;
                         }
   
                     }catch(Exception e){
-                        System.err.println("C++++++"+e.getMessage());
+                        System.err.println(e.getMessage());
                     }
                 }
             }
@@ -175,23 +174,24 @@ public class UICilent {
 		scrollPane_1.setAutoscrolls(true);
 		scrollPane_1.setViewportView(panel_chat);
 		listPanel.put("ALL",panel_chat);
-		comboBox = new JComboBox();
+		
+		JLabel lblNewLabel_1 = new JLabel(myClient.gibName());
+		lblNewLabel_1.setBounds(99, 0, 231, 34);
+		panel.add(lblNewLabel_1);
+		comboBox = new JComboBox<String>();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPanel.get(mode).setVisible(false);
-				mode=(String)comboBox.getSelectedItem();
-				
-				if(!listPanel.containsKey(mode)){
-			    addPanel(mode);
-			    listPanel.get(mode).setVisible(true);
-			    scrollPane_1.setViewportView(listPanel.get(mode));
-				listPanel.get(mode).repaint(); 
-		}
-				else {
-				listPanel.get(mode).setVisible(true);
-				scrollPane_1.setViewportView(listPanel.get(mode));
-				listPanel.get(mode).repaint(); 
+				if(isupdate==false) {
+				  listPanel.get(mode).setVisible(false);
+				  mode=(String)comboBox.getSelectedItem();
+				  if(!listPanel.containsKey(mode)){ addPanel(mode);
+				  listPanel.get(mode).setVisible(true);
+				  scrollPane_1.setViewportView(listPanel.get(mode));
+				  listPanel.get(mode).repaint(); } else { listPanel.get(mode).setVisible(true);
+				  scrollPane_1.setViewportView(listPanel.get(mode));
+				  listPanel.get(mode).repaint(); }
 				}
+				 
 			}
 		});
 		
@@ -200,6 +200,7 @@ public class UICilent {
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				num=0;
 				  JLabel lblNewLabel = new JLabel(textMsg.getText());
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
@@ -215,5 +216,4 @@ public class UICilent {
 		
 		
 	}
-
 }
