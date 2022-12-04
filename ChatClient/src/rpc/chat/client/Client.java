@@ -9,9 +9,16 @@ public class Client implements IClient {
 	boolean newMember=false;
 	String[] listMember=null;
 	boolean newMsg;
-	String msg;
-	
-	
+	String msg;	
+	ObjMsg objMsg;
+	public ObjMsg getObjMsg() {
+		return objMsg;
+	}
+
+	public void setObjMsg(ObjMsg objMsg) {
+		this.objMsg = objMsg;
+	}
+
 	public Client(String name) {
 		this.name = name;
 		this.msg=null;
@@ -19,9 +26,8 @@ public class Client implements IClient {
 	}
 
 	@Override
-	public void empfangen(String msg) {
-		System.out.println(msg);
-		this.msg=msg;
+	public void sendMsg(ObjMsg msg) {
+		this.objMsg=msg;
 		setStatus(true);
 	}
 
@@ -61,5 +67,12 @@ public class Client implements IClient {
 	public boolean getStatusMember() {
 		return newMember;
 	}
+
+	@Override
+	public void empfangen(String msg) {
+		this.msg=msg;
+		setStatus(true);
+	}
+
 
 }

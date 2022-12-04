@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.util.Hashtable;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JTextArea;
@@ -45,11 +46,13 @@ public class UICilent {
 
 	private JFrame frame;
 	private JPanel panel;
-	private ClientProxy clientP ;
+	private ClientProxy clientP;
+	 Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
 	private JComboBox comboBox;
 	private Client myClient ;
 	private JPanel panel_chat;
-	String mode=null;
+	private JScrollPane scrollPane_1;
+	String mode="ALL";
 	int num=0;
 	/**
 	 * Launch the application.
@@ -72,11 +75,11 @@ public class UICilent {
 	 * Create the application.
 	 */
 	public UICilent() throws Exception {
-		
+	
 		System.out.println("-- UI --");
-		myClient = new Client("PA");
+		myClient = new Client("MANH1");
 		System.out.println();
-		RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
+		RPCRuntime rpc = new RPCRuntime(new ServerSocket(6666));
 		rpc.register("ChatClient", new IProxyFactory() {
 			@Override
 			public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
@@ -85,7 +88,7 @@ public class UICilent {
 		});
 		(new Thread(rpc)).start();
 
-		clientP = new ClientProxy("localhost", 8080, rpc);
+		clientP = new ClientProxy("localhost",8080, rpc);
 		clientP.anmelden(myClient);
 		initialize();
 		listenForMessages();
@@ -101,9 +104,12 @@ public class UICilent {
                         if(myClient.gibStatus()) {
                         	num++;
                         	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
+                        	JPanel newPanel = listPanel.get(mode);
+                        	newPanel.add(lblNewLabel);
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                    		panel_chat.add(lblNewLabel);
-                    		panel_chat.repaint();
+                        	 listPanel.put(mode,newPanel);
+                        	 System.out.print(mode);
+                        	 listPanel.get(mode).repaint();
                     		myClient.setStatus(false);
                         }
                         if(myClient.getStatusMember()) {
@@ -121,6 +127,18 @@ public class UICilent {
             }
         }).start();
     }
+	private void addPanel(String name) {
+		JPanel panel_chat_new = createPanelChat();
+	    listPanel.put(name, panel_chat_new);
+	}
+	private JPanel createPanelChat() {
+		JPanel panel_chat_new = new JPanel();
+		panel_chat_new.setBounds(0, 44, 448, 1000);	
+		panel_chat_new.setLayout(null);
+		scrollPane_1.setAutoscrolls(true);
+		scrollPane_1.setViewportView(panel_chat);
+		return panel_chat_new;
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -154,16 +172,6 @@ public class UICilent {
 		frame.getContentPane().add(panel);
 		
 		
-		comboBox = new JComboBox();
-		comboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mode=(String)comboBox.getSelectedItem();
-			}
-		});
-		
-		comboBox.setBounds(37, 29, 77, 44);
-		frame.getContentPane().add(comboBox);
-		
 		JTextPane textMsg = new JTextPane();
 		textMsg.setBounds(39, 344, 267, 33);
 		panel.add(textMsg);
@@ -174,7 +182,7 @@ public class UICilent {
 		btnNewButton.setBounds(316, 344, 96, 33);
 		panel.add(btnNewButton);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_1.setBounds(0, 44, 448, 277);
 		panel.add(scrollPane_1);
@@ -184,21 +192,48 @@ public class UICilent {
 		panel_chat.setLayout(null);
 		scrollPane_1.setAutoscrolls(true);
 		scrollPane_1.setViewportView(panel_chat);
-
+		listPanel.put("ALL",panel_chat);
+		System.out.println("111111111111111");
+		comboBox = new JComboBox();
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("222222222");
+				listPanel.get(mode).setVisible(false);
+				mode=(String)comboBox.getSelectedItem();
+				if(!listPanel.containsKey(mode)){
+					System.out.println("444444444444");
+			    addPanel(mode);
+			    listPanel.get(mode).setVisible(true);
+		}
+				else {
+					System.out.println("111111333333333333111111111");
+				listPanel.get(mode).setVisible(true);
+				}
+				/* panel.setVisible(false); */
+			}
+		});
+		
+		comboBox.setBounds(37, 29, 77, 44);
+		frame.getContentPane().add(comboBox);
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				  JLabel lblNewLabel = new JLabel(textMsg.getText());
 				  num++;
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
-				 lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-				  panel_chat.add(lblNewLabel);
+					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+					System.out.println(mode);
+					JPanel newPanel =listPanel.get(mode);
+					newPanel.add(lblNewLabel);
+					listPanel.put(mode,newPanel);
 				  clientP.broadcast(textMsg.getText(), myClient,mode); 
 				  textMsg.setText(null);
-				  panel_chat.repaint(); 
+				  listPanel.get(mode).repaint(); 
 			}
 		});
 	
 		
 		
 	}
+
 }
