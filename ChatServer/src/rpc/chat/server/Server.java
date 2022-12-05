@@ -8,59 +8,53 @@ import rpc.chat.interfaces.IServer;
 public class Server implements IServer {
 	
 	List<IClient> clients = new ArrayList<>();
-
+	
+	/* Phát tin */
 	@Override
-	//phát tin
 	public void broadcast(String msg, IClient client,String receiver) {
 		if(receiver.equals("ALL")) {
 			for (IClient iClient : clients) {
 				try {
-					if(!iClient.gibName().equals(client.gibName()))
-						iClient.empfangen("ALL" + ": " + msg);
+					if(!iClient.getName().equals(client.getName()))
+						iClient.receive("ALL" + ": " + msg);
 				} catch (Exception e) {
-					this.abmelden(iClient);
+					this.logout(iClient);
 				}
 			}
 		 }
 		else {
 			 for (IClient iClient : clients) {
 					try {
-						if(iClient.gibName().equals(receiver))
-							iClient.empfangen(client.gibName() + ": " + msg);
+						if(iClient.getName().equals(receiver))
+							iClient.receive(client.getName() + ": " + msg);
 					}catch (Exception e) {
-						this.abmelden(iClient);
+						this.logout(iClient);
 					}
 				}
-		 }
-		
+		 }		
 	}
-	public String getAllMember() {
-		String listMember = "";
-		for (IClient iClient : clients) 
-			listMember.concat("+"+iClient.gibName());
-		return listMember;
-	}
-
-
-	//dăng nhập
+	
+	
+	/* Đăng nhập */
 	@Override
-	public void anmelden(IClient client) {
+	public void login(IClient client) {
 		clients.add(client);
 	}
 	
+	/* Cập nhật thành viên */
 	public void updateMember() {
 		String listMember = "ALL";
 		for (IClient iClient : clients) {
-			listMember+="+"+iClient.gibName();
+			listMember+="+"+iClient.getName();
 		}
 		for (IClient iClient : clients) {
 			iClient.updateMember(listMember);
 		}
 	}
 
-	//đăng xuất
+	/* Đăng xuất */
 	@Override
-	public void abmelden(IClient client) {
+	public void logout(IClient client) {
 		clients.remove(client);
 
 	}

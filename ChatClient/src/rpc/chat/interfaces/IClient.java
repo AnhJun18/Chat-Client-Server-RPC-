@@ -2,7 +2,7 @@ package rpc.chat.interfaces;
 
 
 public interface IClient {
-	void empfangen(String msg);
-	String gibName();
+	void receive(String msg);
+	String getName();
 	void updateMember(String clients);
 }

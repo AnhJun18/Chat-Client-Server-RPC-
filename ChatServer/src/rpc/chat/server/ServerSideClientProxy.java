@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import rpc.chat.interfaces.IClient;
-import rpc.chat.interfaces.IServer;
 
 public class ServerSideClientProxy implements IClient {
 	Socket socket;
-
 	BufferedReader input;
 	PrintWriter output;
 
@@ -26,13 +23,12 @@ public class ServerSideClientProxy implements IClient {
 		for (int i = 0; i < size; i++) {
 			System.out.println(input.readLine());
 		}
-
 		output.println("ChatClient");
 		output.flush();
 		
 		String msg = input.readLine();
-		System.out.println("Msg: " + msg);
-		if (!msg.equals("Methoden: (1)Empfangen (2)GibName")) {
+		System.out.println(msg);
+		if (!msg.equals("Methods: (1)Receive (2)GetName (3)Update Member")) {
 			throw new Exception("Falscher-Proxy-Alarm!");
 		}
 	}
@@ -41,32 +37,30 @@ public class ServerSideClientProxy implements IClient {
 		switch (input.readLine().substring(0, 3)) {
 		case "500":
 			String line = input.readLine();
-			System.out.println(input.readLine());
+			input.readLine();
 			throw new RuntimeException(line);
 
 		case "200":
-			System.out.println(input.readLine());
+			input.readLine();
 			return null;
-			
 		case "400":
 			String s = input.readLine();
-			System.out.println(input.readLine());
+			input.readLine();
 			return s;
 
 		default:
-			System.out.println(input.readLine());
-			throw new RuntimeException("Implementationsfehler");
+			input.readLine();
+			throw new RuntimeException("Error");
 		}
 	}
 
 	@Override
-	public void empfangen(String msg) {
+	public void receive(String msg) {
 		output.println("1");
 		output.flush();
-
 		try {
 
-			System.out.println(input.readLine());
+			input.readLine();
 
 			output.println(msg);
 			output.flush();
@@ -80,7 +74,7 @@ public class ServerSideClientProxy implements IClient {
 	}
 
 	@Override
-	public String gibName() {
+	public String getName() {
 		output.println("2");
 		output.flush();
 
@@ -99,7 +93,7 @@ public class ServerSideClientProxy implements IClient {
 		output.flush();
 
 		try {
-			System.out.println(input.readLine());
+			input.readLine();
 			output.println(member);
 			output.flush();
 			evaluateErrorCode();

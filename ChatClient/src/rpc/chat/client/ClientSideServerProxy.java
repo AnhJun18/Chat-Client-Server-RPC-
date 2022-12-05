@@ -18,12 +18,12 @@ public class ClientSideServerProxy implements Runnable, IProxy {
 		this.out = out;
 	}
 
-	private void gibName() {
+	private void getName() {
 
 		try {
 
 			out.println("400 - Success");
-			out.println(client.gibName());
+			out.println(client.getName());
 
 		} catch (Exception e) {
 
@@ -35,11 +35,11 @@ public class ClientSideServerProxy implements Runnable, IProxy {
 
 	}
 
-	private void empfangen() {
+	private void receive() {
 		try {
-			out.println("Gib mir die Message");
+			out.println("Tin nhan la gi");
 			out.flush();
-			client.empfangen(in.readLine());
+			client.receive(in.readLine());
 			out.println("200 - Success");
 
 		} catch (Exception e) {
@@ -72,25 +72,25 @@ public class ClientSideServerProxy implements Runnable, IProxy {
 	public void run() {
 		while (running) {
 			try {
-				out.println("Methoden: (1)Empfangen (2)GibName");
+				out.println("Methods: (1)Receive (2)GetName (3)Update Member");
 				out.flush();
 
 				String line = in.readLine();
 
 				switch (line) {
 				case "1":
-					this.empfangen();
+					this.receive();
 					break;
 
 				case "2":
-					this.gibName();
+					this.getName();
 					break;
 				case "3":
 					this.updateMember();
 					break;
 
 				default:
-					out.println("Protokollfehler!");
+					out.println("log error!");
 					out.flush();
 					break;
 				}

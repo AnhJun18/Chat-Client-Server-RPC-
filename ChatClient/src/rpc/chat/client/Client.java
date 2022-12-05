@@ -3,39 +3,45 @@ import rpc.chat.interfaces.IClient;
 
 public class Client implements IClient {
 	
-	String name;
-	boolean newMember=false;
-	String[] listMember=null;
-	boolean newMsg;
-	String msg;	
+	private String name;
+	private boolean isNewMember;
+	private String[] listMember;
+	private boolean isNewMsg;
+	private String msg;	
 
 	public Client(String name) {
 		this.name = name;
 		this.msg=null;
-		this.newMsg=false;
+		this.isNewMsg=false;
+		this.isNewMember=false;
+		this.listMember=null;
 	}
 
 	@Override
-	public String gibName() {
+	public String getName() {
 		return name;
 	}
-	
+	@Override
+	public void receive(String msg) {
+		this.msg=msg;
+		setNewMsg(true);
+	}
 	
 	@Override
 	public void updateMember(String clients) {
 		listMember=clients.split("\\+");
-		newMember=true;
+		isNewMember=true;
 	}
 
-	public boolean gibStatus() {
-		return newMsg;
+	public boolean getNewMsg() {
+		return isNewMsg;
 	}
 	
-	public void setStatus(boolean st) {
-		this.newMsg=st;
+	public void setNewMsg(boolean st) {
+		this.isNewMsg=st;
 	}
 	
-	public String gibMsg() {
+	public String getMsg() {
 		return msg;
 	}
 	
@@ -43,19 +49,16 @@ public class Client implements IClient {
 		return listMember;
 	}
 	
-	public void setStatusMember(boolean st) {
-		this.newMember=st;
+	
+	public void setNewMember(boolean st) {
+		this.isNewMember=st;
 	}
 	
-	public boolean getStatusMember() {
-		return newMember;
+	public boolean getNewMember() {
+		return isNewMember;
 	}
 
-	@Override
-	public void empfangen(String msg) {
-		this.msg=msg;
-		setStatus(true);
-	}
+	
 
 
 }

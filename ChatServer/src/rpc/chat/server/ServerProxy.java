@@ -2,37 +2,31 @@ package rpc.chat.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import rpc.chat.interfaces.IProxy;
 
 public class ServerProxy implements Runnable, IProxy {
 	BufferedReader in;
 	PrintWriter out;
-
 	Server server;
-
 	boolean running = true;
-
 	ServerSideClientProxy lc;
 
 	public ServerProxy(BufferedReader in, PrintWriter out, Object server) {
 		this.server = (Server) server;
 		this.in = in;
 		this.out = out;
-		//System.out.println("5"); 
+	
 	}
 
 	private void broadcast() {
 		try {
-			out.println("Gib mir deine Nachricht!");
+			out.println("Nhap tin nhan: ");
 			out.flush();
 			String msg = in.readLine();
 			String receiver = in.readLine();
-			
 			server.broadcast(msg, lc,receiver);
 			out.println("200 - Success");
-			
 		} catch (Exception e) {
 			
 			out.println("500 - Internal Server Error");
@@ -43,13 +37,13 @@ public class ServerProxy implements Runnable, IProxy {
 		out.flush();
 	}
 
-	private void anmelden() throws IOException {
-		out.println("Gib mir deine IP-Adresse!");
+	private void login() throws IOException {
+		out.println("Nhap IP:");
 		out.flush();
 		String IP = in.readLine();
 		System.out.println("IP: " + IP);
 		
-		out.println("Gib mir deinen Port!");
+		out.println("Nhap Port:");
 		out.flush();
 		int port = Integer.parseInt(in.readLine());
 		System.out.println("Port: " + port);
@@ -57,7 +51,7 @@ public class ServerProxy implements Runnable, IProxy {
 		try {
 			lc = new ServerSideClientProxy(IP, port);
 			
-			server.anmelden(lc);
+			server.login(lc);
 			out.println("200 - Success");
 			
 		} catch (Exception e) {
@@ -70,10 +64,10 @@ public class ServerProxy implements Runnable, IProxy {
 		server.updateMember();
 	}
 
-	private void abmelden() throws IOException {
+	private void logout() throws IOException {
 		try {
 			
-			server.abmelden(lc);
+			server.logout(lc);
 			out.println("200 - Success");
 			
 		} catch (Exception e) {
@@ -93,7 +87,7 @@ public class ServerProxy implements Runnable, IProxy {
 	public void run() {
 		while (running) {
 			try {
-				out.println("Methoden: (1)broadcast (2)anmelden (3)abmelden");
+				out.println("Methods: (1)broadcast (2)login (3)logout");
 				out.flush();
 
 				String line = in.readLine();
@@ -104,15 +98,15 @@ public class ServerProxy implements Runnable, IProxy {
 					break;
 
 				case "2":
-					this.anmelden();
+					this.login();
 					break;
 
 				case "3":
-					this.abmelden();
+					this.logout();
 					break;
 
 				default:
-					out.println("Protokollfehler!");
+					out.println("Khong ho tro!");
 					out.flush();
 					break;
 				}

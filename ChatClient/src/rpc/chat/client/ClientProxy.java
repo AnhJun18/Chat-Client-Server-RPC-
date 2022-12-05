@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import rpc.chat.interfaces.IClient;
@@ -11,7 +10,6 @@ import rpc.chat.interfaces.IServer;
 
 public class ClientProxy implements IServer {
 	Socket socket;
-
 	BufferedReader input;
 	PrintWriter output;
 	RPCRuntime rpc;
@@ -30,8 +28,9 @@ public class ClientProxy implements IServer {
 
 		output.println("ChatServer");
 		output.flush();
-
-		if (!input.readLine().equals("Methoden: (1)broadcast (2)anmelden (3)abmelden")) {
+		String msg=input.readLine();
+		System.out.println(msg);
+		if (!msg.equals("Methods: (1)broadcast (2)login (3)logout")) {
 			throw new Exception("Falscher-Proxy-Alarm!");
 		}
 	}
@@ -57,12 +56,11 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void anmelden(IClient client) {
+	public void login(IClient client) {
 		output.println("2");
 		output.flush();
-
 		try {
-			System.out.println(input.readLine());
+			input.readLine();
 			output.println("127.0.0.1");
 			output.flush();
 			
@@ -80,7 +78,7 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void abmelden(IClient client) {
+	public void logout(IClient client) {
 		output.println("3");
 		output.flush();
 
@@ -107,7 +105,7 @@ public class ClientProxy implements IServer {
 
 		default:
 			System.out.println(input.readLine());
-			throw new RuntimeException("Implementationsfehler");
+			throw new RuntimeException("Error");
 		}
 	}
 }

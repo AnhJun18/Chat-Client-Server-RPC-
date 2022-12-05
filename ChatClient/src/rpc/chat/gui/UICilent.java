@@ -75,7 +75,7 @@ public class UICilent {
 		(new Thread(rpc)).start();
 
 		clientP = new ClientProxy("localhost", 8080, rpc);
-		clientP.anmelden(myClient);
+		clientP.login(myClient);
 		initialize();
 		listenForMessages();
 	}
@@ -87,28 +87,28 @@ public class UICilent {
                 while(true){
                     try{
                     	Thread.sleep(500);
-                        if(myClient.gibStatus()) {
+                        if(myClient.getNewMsg()) {
                         	num++;
-                        	JLabel lblNewLabel = new JLabel(myClient.gibMsg());
+                        	JLabel lblNewLabel = new JLabel(myClient.getMsg());
                         	lblNewLabel.setBounds(36, 43+num*20, 367, 66);
-                        	String sender=myClient.gibMsg().split(":")[0];
+                        	String sender=myClient.getMsg().split(":")[0];
                         	listPanel.get(sender).add(lblNewLabel); 
                         	listPanel.get(sender).repaint();
-                    		myClient.setStatus(false);
+                    		myClient.setNewMsg(false);
                         }
-                        if(myClient.getStatusMember()) {
+                        if(myClient.getNewMember()) {
                         	isupdate=true;
                         	 comboBox.removeAllItems();
                         	 for (String client: myClient.getMember()) {                 
 								 comboBox.addItem(client); 
            					  }	
-                        	 myClient.setStatusMember(false); 
+                        	 myClient.setNewMember(false); 
                         	 comboBox.setSelectedItem(mode);
                         	 isupdate=false;
                         }
   
                     }catch(Exception e){
-                        System.err.println(e.getMessage());
+                        System.err.println("=>"+e.getMessage());
                     }
                 }
             }
@@ -177,7 +177,7 @@ public class UICilent {
 		scrollPane_1.setViewportView(panel_chat);
 		listPanel.put("ALL",panel_chat);
 		
-		JLabel lblNewLabel_1 = new JLabel(myClient.gibName());
+		JLabel lblNewLabel_1 = new JLabel(myClient.getName());
 		lblNewLabel_1.setBounds(99, 0, 231, 34);
 		panel.add(lblNewLabel_1);
 		comboBox = new JComboBox<String>();
@@ -208,7 +208,6 @@ public class UICilent {
 				  lblNewLabel.setBounds(10,20+num*20, 367, 66); 
 					lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 					listPanel.get(mode).add(lblNewLabel);
-				  System.out.println(listPanel.get(mode).toString());
 				  clientP.broadcast(textMsg.getText(),myClient,mode); 
 				  textMsg.setText(null);
 				  listPanel.get(mode).repaint(); 
@@ -218,7 +217,7 @@ public class UICilent {
 		frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-            	clientP.abmelden(myClient);
+            	clientP.logout(myClient);
                 System.exit(0);
             }
         });

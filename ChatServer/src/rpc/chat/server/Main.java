@@ -10,7 +10,7 @@ import rpc.chat.interfaces.IProxyFactory;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		System.out.println("-- SERVER --");
+		System.out.println("=== SERVER ===");
 		Server s = new Server();
 		RPCRuntime rpc = new RPCRuntime(new ServerSocket(8080));
 	
@@ -24,5 +24,4 @@ public class Main {
 		(new Thread(rpc)).start();
 
 	}
-
 }
