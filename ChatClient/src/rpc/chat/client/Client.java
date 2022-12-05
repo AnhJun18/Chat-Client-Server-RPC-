@@ -23,7 +23,6 @@ public class Client implements IClient {
 	
 	@Override
 	public void updateMember(String clients) {
-		System.out.println("++++++"+clients);
 		listMember=clients.split("\\+");
 		newMember=true;
 	}

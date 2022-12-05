@@ -84,6 +84,7 @@ public class ServerProxy implements Runnable, IProxy {
 		}
 		
 		out.flush();
+		server.updateMember();
 		running = false;
 		in.close();
 		out.close();
