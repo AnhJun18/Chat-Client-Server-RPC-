@@ -2,20 +2,25 @@ package rpc.chat.gui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -26,60 +31,75 @@ import rpc.chat.client.Client;
 import rpc.chat.client.ClientProxy;
 import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
-import rpc.chat.interfaces.IProxy;
-import rpc.chat.interfaces.IProxyFactory;
 import rpc.chat.gui.UILogin;
-public class UICilent {
-	private JFrame frame;
-	private JPanel panel;
+import rpc.chat.interfaces.IProxy;
+import rpc.chat.interfaces.IProxyFactory; 
+public class MainUI {
+	private JPanel panelLogin;
+	private JPanel panelChat;
 	private ClientProxy clientP;
 	Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
 	private JComboBox<String> comboBox;
 	private Client myClient ;
 	private String clientName;
-	public String getClientName() {
-		return clientName;
-	}
-
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
-	}
-
-	public String getPort() {
-		return port;
-	}
-
-	public void setPort(String port) {
-		this.port = port;
-	}
 	private String port;
 	private JPanel panel_chat;
 	private JScrollPane scrollPane_1;
 	String mode="ALL";
 	boolean isupdate=false;
 	int num=0;
+	private JFrame frame;
+	private boolean isLogin=false;
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) throws Exception{
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					UICilent window = new UICilent();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//		
-//	}
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainUI window = new MainUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the application.
+	 * @throws Exception 
 	 */
-	public UICilent(JFrame frame ) throws Exception {   
-		this.frame = frame;
+	public MainUI() throws Exception {
+		this.isLogin = false;
+		initialize();
+		panellogin();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 * @throws Exception 
+	 */
+	private void initialize() throws Exception {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+//    public void actionPerformed(ActionEvent e) throws Exception, Exception {
+//    	 if(UiLogin.getIsLogin()) {
+//    		 UiLogin.getJpanel().setVisible(false);
+//    		 UiClient.run(UiLogin.getUserName(),Integer.parseInt(UiLogin.getPort()));
+//    		 frame.add(UiClient.getScreen()).setVisible(true);;
+//    	 }
+//    }
+	
+	private void addPanel(String name) {
+		JPanel panel_chat_new = new JPanel();
+		panel_chat_new.setBounds(0, 44, 448, 1000);	
+		panel_chat_new.setLayout(null);
+		scrollPane_1.setAutoscrolls(true);
+		scrollPane_1.setViewportView(panel_chat_new);
+	    listPanel.put(name, panel_chat_new);
 	}
 	public void run(String name,int port) throws Exception {
 		myClient = new Client(name);
@@ -93,7 +113,10 @@ public class UICilent {
 		(new Thread(rpc)).start();
 		clientP = new ClientProxy("localhost", 8080, rpc);
 	    clientP.login(myClient);
+	    ScreenChat();
 		listenForMessages();
+		panelLogin.setVisible(false);
+		panelChat.setVisible(true);
 	}
 	public void listenForMessages(){
         new Thread(new Runnable() {
@@ -129,18 +152,7 @@ public class UICilent {
             }
         }).start();
     }
-	private void addPanel(String name) {
-		JPanel panel_chat_new = new JPanel();
-		panel_chat_new.setBounds(0, 44, 448, 1000);	
-		panel_chat_new.setLayout(null);
-		scrollPane_1.setAutoscrolls(true);
-		scrollPane_1.setViewportView(panel_chat_new);
-	    listPanel.put(name, panel_chat_new);
-	}
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	public void getScreen() {
+	public void ScreenChat() {
 		try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Windows".equals(info.getName())) {
@@ -158,32 +170,31 @@ public class UICilent {
             java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
        
-		frame = new JFrame();
 		frame.setBounds(100, 100, 667, 477);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 	
-		panel= new JPanel();
-		panel.setBackground(new Color(192, 192, 192));
-		panel.setBounds(113, 29, 448, 385);		
-		panel.setLayout(null);
-		frame.getContentPane().add(panel);
+		panelChat= new JPanel();
+		panelChat.setBackground(new Color(192, 192, 192));
+		panelChat.setBounds(113, 29, 448, 385);		
+		panelChat.setLayout(null);
+		frame.add(panelChat);
 		
 		
 		JTextPane textMsg = new JTextPane();
 		textMsg.setBounds(39, 344, 267, 33);
-		panel.add(textMsg);
+		panelChat.add(textMsg);
 		
 	    
 		JButton btnNewButton = new JButton("Send");
 	
 		btnNewButton.setBounds(316, 344, 96, 33);
-		panel.add(btnNewButton);
+		panelChat.add(btnNewButton);
 		
 		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_1.setBounds(0, 44, 448, 277);
-		panel.add(scrollPane_1);
+		panelChat.add(scrollPane_1);
 		
 		panel_chat = new JPanel();
 		panel_chat.setBounds(0, 44, 448, 1000);	
@@ -194,7 +205,7 @@ public class UICilent {
 		
 		JLabel lblNewLabel_1 = new JLabel(myClient.getName());
 		lblNewLabel_1.setBounds(99, 0, 231, 34);
-		panel.add(lblNewLabel_1);
+		panelChat.add(lblNewLabel_1);
 		comboBox = new JComboBox<String>();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -236,6 +247,63 @@ public class UICilent {
                 System.exit(0);
             }
         });
+	}
+	public void panellogin() {
+		panelLogin = new JPanel();
+		panelLogin.setBounds(0, 0, 434, 261);
+		panelLogin.setLayout(null);
+		JEditorPane txtName = new JEditorPane();
+		txtName.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		txtName.setBounds(156, 60, 145, 20);
+		panelLogin.add(txtName);
+		
+		JLabel lblNewLabel = new JLabel("USER NAME");
+		lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		lblNewLabel.setBounds(69, 66, 77, 14);
+		panelLogin.add(lblNewLabel);
+		
+		JButton btnLogin = new JButton("Dô");
+		btnLogin.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		btnLogin.setBounds(174, 146, 89, 32);
+		panelLogin.add(btnLogin);
+		
+		JLabel lblNewLabel_1 = new JLabel("PORT");
+		lblNewLabel_1.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		lblNewLabel_1.setBounds(69, 96, 46, 14);
+		panelLogin.add(lblNewLabel_1);
+		frame.add(panelLogin);
+	    JFormattedTextField txtPort = new JFormattedTextField();
+	    txtPort.addKeyListener(new KeyAdapter() {
+	        public void keyTyped(KeyEvent e) {
+	            char c = e.getKeyChar();
+	            if (!((c >= '0') && (c <= '9') ||
+	               (c == KeyEvent.VK_BACK_SPACE) ||
+	               (c == KeyEvent.VK_DELETE))) {  
+	              e.consume();
+	            }
+	          }
+	        });
+		txtPort.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		txtPort.setBounds(156, 90, 107, 20);
+		panelLogin.add(txtPort);
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name= txtName.getText();
+				String port= txtPort.getText();
+				if(name.isEmpty()|| port.isEmpty() ) {
+					JOptionPane.showMessageDialog(frame,"Nhập đầy đủ các thông số");
+				}
+				else {
+				     try {
+						run(name,Integer.parseInt(port));
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				 
+			}
+		});
 		
 	}
 }
