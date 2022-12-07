@@ -1,4 +1,4 @@
-package rpc.chat.gui2;
+package rpc.chat.gui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -31,6 +31,7 @@ import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory; 
+
 public class UIClient {
 	private JPanel panelLogin;
 	private JPanel panelChat;
@@ -45,6 +46,8 @@ public class UIClient {
 	int num=0;
 	private JFrame frame;
 	boolean isOpen=false;
+	public static String serverIP="169.254.22.126";
+	public static int serverPort=8080;
 
 	//private boolean isLogin=false;
 	/**
@@ -112,7 +115,7 @@ public class UIClient {
 			});
 			Thread ab=new Thread(rpc);ab.start();
 			isOpen=true;
-			clientP = new ClientProxy("localhost", 8080, rpc);
+			clientP = new ClientProxy(serverIP, serverPort, rpc);
 			}
 		
 		    clientP.login(myClient);
