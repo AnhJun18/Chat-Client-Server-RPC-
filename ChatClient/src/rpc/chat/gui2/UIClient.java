@@ -1,4 +1,4 @@
-package rpc.chat.gui;
+package rpc.chat.gui2;
 
 import java.awt.Color;
 import java.awt.EventQueue;

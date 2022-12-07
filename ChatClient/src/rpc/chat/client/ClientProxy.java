@@ -60,7 +60,7 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void login(IClient client)  {
+	public void login(IClient client) throws NameAlreadyBoundException  {
 	     
 		output.println("2");
 		output.flush();
@@ -76,7 +76,9 @@ public class ClientProxy implements IServer {
 			evaluateErrorCode();
 		   
 		
-		} catch (Exception e) {
+		} catch (NameAlreadyBoundException e) {
+			 throw new NameAlreadyBoundException(e.getMessage());
+		}catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
