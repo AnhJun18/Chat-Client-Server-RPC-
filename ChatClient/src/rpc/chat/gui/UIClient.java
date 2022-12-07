@@ -5,20 +5,16 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Hashtable;
 
-import javax.naming.CannotProceedException;
+import javax.naming.NameAlreadyBoundException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,7 +31,7 @@ import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory; 
-public class MainUI {
+public class UIClient {
 	private JPanel panelLogin;
 	private JPanel panelChat;
 	private ClientProxy clientP;
@@ -48,6 +44,8 @@ public class MainUI {
 	boolean isupdate=false;
 	int num=0;
 	private JFrame frame;
+	boolean isOpen=false;
+
 	//private boolean isLogin=false;
 	/**
 	 * Launch the application.
@@ -56,7 +54,7 @@ public class MainUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainUI window = new MainUI();
+					UIClient window = new UIClient();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -69,7 +67,7 @@ public class MainUI {
 	 * Create the application.
 	 * @throws Exception 
 	 */
-	public MainUI() throws Exception {
+	public UIClient() throws Exception {
 	//	this.isLogin = false;
 		initialize();
 		panellogin();
@@ -100,27 +98,33 @@ public class MainUI {
 		scrollPane_1.setViewportView(panel_chat_new);
 	    listPanel.put(name, panel_chat_new);
 	}
-	public void run(String name,int port) throws Exception {
+	public void run(String name) throws Exception {
+		
 		try {
 			myClient = new Client(name);
-			RPCRuntime rpc = new RPCRuntime(new ServerSocket(port));
+			if(!isOpen) {
+			RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
 			rpc.register("ChatClient", new IProxyFactory() {
 				@Override
 				public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
 					return new ClientSideServerProxy(inputStream, outputStream, myClient);
 				}
 			});
-			(new Thread(rpc)).start();
+			Thread ab=new Thread(rpc);ab.start();
+			isOpen=true;
 			clientP = new ClientProxy("localhost", 8080, rpc);
+			}
+		
 		    clientP.login(myClient);
 		    ScreenChat();
 			listenForMessages();
 			panelLogin.setVisible(false);
 			panelChat.setVisible(true);
+		}catch (NameAlreadyBoundException e) {
+			JOptionPane.showMessageDialog(frame,e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(frame,"Lỗi mở Port: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
-			System.out.println();
+			JOptionPane.showMessageDialog(frame,"Lỗi Port đã được sử dụng: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
@@ -167,13 +171,13 @@ public class MainUI {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
        
 		frame.setBounds(100, 100, 667, 477);
@@ -245,14 +249,7 @@ public class MainUI {
 				  listPanel.get(mode).repaint(); 
 			}
 		});
-	
-		frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-            	clientP.logout(myClient);
-                System.exit(0);
-            }
-        });
+		
 	}
 	public void panellogin() {
 		try {
@@ -263,13 +260,13 @@ public class MainUI {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UIClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 		panelLogin = new JPanel();
 		panelLogin.setBounds(0, 0, 434, 261);
@@ -277,48 +274,28 @@ public class MainUI {
 		JTextField txtName = new JTextField();
 	
 		txtName.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		txtName.setBounds(156, 60, 155, 32);
+		txtName.setBounds(161, 89, 155, 32);
 		panelLogin.add(txtName);
 		
 		JLabel lblNewLabel = new JLabel("USER NAME");
 		lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		lblNewLabel.setBounds(69, 69, 77, 23);
+		lblNewLabel.setBounds(74, 94, 77, 23);
 		panelLogin.add(lblNewLabel);
 		
 		JButton btnLogin = new JButton("LOGIN");
 		btnLogin.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		btnLogin.setBounds(190, 160, 89, 32);
+		btnLogin.setBounds(191, 147, 89, 32);
 		panelLogin.add(btnLogin);
-		
-		JLabel lblNewLabel_1 = new JLabel("PORT");
-		lblNewLabel_1.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		lblNewLabel_1.setBounds(109, 109, 37, 23);
-		panelLogin.add(lblNewLabel_1);
 		frame.getContentPane().add(panelLogin);
-	    JFormattedTextField txtPort = new JFormattedTextField();
-	    txtPort.addKeyListener(new KeyAdapter() {
-	        public void keyTyped(KeyEvent e) {
-	            char c = e.getKeyChar();
-	            if (!((c >= '0') && (c <= '9') ||
-	               (c == KeyEvent.VK_BACK_SPACE) ||
-	               (c == KeyEvent.VK_DELETE))) {  
-	              e.consume();
-	            }
-	          }
-	        });
-		txtPort.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		txtPort.setBounds(156, 104, 155, 32);
-		panelLogin.add(txtPort);
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String name= txtName.getText();
-				String port= txtPort.getText();
-				if(name.isEmpty()|| port.isEmpty() ) {
+				if(name.trim().isEmpty() ) {
 					JOptionPane.showMessageDialog(frame,"Nhập đầy đủ các thông số");
 				}
 				else {
 				     try {
-						run(name,Integer.parseInt(port));
+						run(name);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -327,6 +304,16 @@ public class MainUI {
 				 
 			}
 		});
+		frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	if(isOpen) {
+            		clientP.logout(myClient);		
+            	}
+            	
+                System.exit(0);
+            }
+        });
 		
 	}
 }

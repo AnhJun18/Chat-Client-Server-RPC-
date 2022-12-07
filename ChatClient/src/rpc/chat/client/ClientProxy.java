@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.naming.CannotProceedException;
+import javax.naming.NameAlreadyBoundException;
 
 import rpc.chat.interfaces.IClient;
 import rpc.chat.interfaces.IServer;
@@ -61,19 +61,12 @@ public class ClientProxy implements IServer {
 
 	@Override
 	public void login(IClient client)  {
-		  InetAddress localHost;
-		try {
-			localHost = InetAddress.getLocalHost();
-			   System.out.println(localHost.getHostAddress());
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		}
 	     
 		output.println("2");
 		output.flush();
 		try {
 			input.readLine();
-			output.println("127.0.0.1");
+			output.println( InetAddress.getLocalHost().getHostAddress());
 			output.flush();
 			
 			input.readLine();
@@ -81,7 +74,7 @@ public class ClientProxy implements IServer {
 			output.flush();
 			
 			evaluateErrorCode();
-		
+		   
 		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -104,7 +97,7 @@ public class ClientProxy implements IServer {
 
 	}
 
-	private void evaluateErrorCode() throws IOException {
+	private void evaluateErrorCode() throws IOException, NameAlreadyBoundException {
 		switch (input.readLine().substring(0, 3)) {
 		case "500":
 			String line = input.readLine();
@@ -114,7 +107,9 @@ public class ClientProxy implements IServer {
 		case "200":
 			input.readLine();
 			return;
-
+		case "201":
+			input.readLine();
+			throw new NameAlreadyBoundException("Tên đăng nhập đã tồn tại");
 		default:
 			System.out.println(input.readLine());
 			throw new RuntimeException("Error");

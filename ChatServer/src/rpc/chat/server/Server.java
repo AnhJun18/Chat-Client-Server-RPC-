@@ -3,6 +3,8 @@ package rpc.chat.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.NameAlreadyBoundException;
+
 import rpc.chat.interfaces.IClient;
 import rpc.chat.interfaces.IServer;
 
@@ -36,7 +38,12 @@ public class Server implements IServer {
 
 	/* Đăng nhập */
 	@Override
-	public void login(IClient client) {
+	public void login(IClient client) throws NameAlreadyBoundException {
+		for (IClient iClient : clients)
+			if(iClient.getName().equals(client.getName())) {
+				throw new NameAlreadyBoundException();
+			}
+				
 		clients.add(client);
 	}
 
