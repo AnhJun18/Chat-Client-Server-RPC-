@@ -12,17 +12,19 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Hashtable;
 
+import javax.naming.CannotProceedException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -31,7 +33,6 @@ import rpc.chat.client.Client;
 import rpc.chat.client.ClientProxy;
 import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
-import rpc.chat.gui.UILogin;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory; 
 public class MainUI {
@@ -41,15 +42,13 @@ public class MainUI {
 	Hashtable<String, JPanel> listPanel = new Hashtable<String,JPanel>();
 	private JComboBox<String> comboBox;
 	private Client myClient ;
-	private String clientName;
-	private String port;
 	private JPanel panel_chat;
 	private JScrollPane scrollPane_1;
 	String mode="ALL";
 	boolean isupdate=false;
 	int num=0;
 	private JFrame frame;
-	private boolean isLogin=false;
+	//private boolean isLogin=false;
 	/**
 	 * Launch the application.
 	 */
@@ -71,7 +70,7 @@ public class MainUI {
 	 * @throws Exception 
 	 */
 	public MainUI() throws Exception {
-		this.isLogin = false;
+	//	this.isLogin = false;
 		initialize();
 		panellogin();
 	}
@@ -102,21 +101,31 @@ public class MainUI {
 	    listPanel.put(name, panel_chat_new);
 	}
 	public void run(String name,int port) throws Exception {
-		myClient = new Client(name);
-		RPCRuntime rpc = new RPCRuntime(new ServerSocket(port));
-		rpc.register("ChatClient", new IProxyFactory() {
-			@Override
-			public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
-				return new ClientSideServerProxy(inputStream, outputStream, myClient);
-			}
-		});
-		(new Thread(rpc)).start();
-		clientP = new ClientProxy("localhost", 8080, rpc);
-	    clientP.login(myClient);
-	    ScreenChat();
-		listenForMessages();
-		panelLogin.setVisible(false);
-		panelChat.setVisible(true);
+		try {
+			myClient = new Client(name);
+			RPCRuntime rpc = new RPCRuntime(new ServerSocket(port));
+			rpc.register("ChatClient", new IProxyFactory() {
+				@Override
+				public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
+					return new ClientSideServerProxy(inputStream, outputStream, myClient);
+				}
+			});
+			(new Thread(rpc)).start();
+			clientP = new ClientProxy("localhost", 8080, rpc);
+		    clientP.login(myClient);
+		    ScreenChat();
+			listenForMessages();
+			panelLogin.setVisible(false);
+			panelChat.setVisible(true);
+		}
+		catch (CannotProceedException e) {
+			JOptionPane.showMessageDialog(frame,e.getMessage());
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(frame,"Lỗi mở Port: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+			System.out.println();
+		}
+		
 	}
 	public void listenForMessages(){
         new Thread(new Runnable() {
@@ -161,13 +170,13 @@ public class MainUI {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UICilent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
        
 		frame.setBounds(100, 100, 667, 477);
@@ -178,7 +187,7 @@ public class MainUI {
 		panelChat.setBackground(new Color(192, 192, 192));
 		panelChat.setBounds(113, 29, 448, 385);		
 		panelChat.setLayout(null);
-		frame.add(panelChat);
+		frame.getContentPane().add(panelChat);
 		
 		
 		JTextPane textMsg = new JTextPane();
@@ -249,29 +258,46 @@ public class MainUI {
         });
 	}
 	public void panellogin() {
+		try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
 		panelLogin = new JPanel();
 		panelLogin.setBounds(0, 0, 434, 261);
 		panelLogin.setLayout(null);
-		JEditorPane txtName = new JEditorPane();
+		JTextField txtName = new JTextField();
+	
 		txtName.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		txtName.setBounds(156, 60, 145, 20);
+		txtName.setBounds(156, 60, 155, 32);
 		panelLogin.add(txtName);
 		
 		JLabel lblNewLabel = new JLabel("USER NAME");
 		lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		lblNewLabel.setBounds(69, 66, 77, 14);
+		lblNewLabel.setBounds(69, 69, 77, 23);
 		panelLogin.add(lblNewLabel);
 		
-		JButton btnLogin = new JButton("Dô");
+		JButton btnLogin = new JButton("LOGIN");
 		btnLogin.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		btnLogin.setBounds(174, 146, 89, 32);
+		btnLogin.setBounds(190, 160, 89, 32);
 		panelLogin.add(btnLogin);
 		
 		JLabel lblNewLabel_1 = new JLabel("PORT");
 		lblNewLabel_1.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		lblNewLabel_1.setBounds(69, 96, 46, 14);
+		lblNewLabel_1.setBounds(109, 109, 37, 23);
 		panelLogin.add(lblNewLabel_1);
-		frame.add(panelLogin);
+		frame.getContentPane().add(panelLogin);
 	    JFormattedTextField txtPort = new JFormattedTextField();
 	    txtPort.addKeyListener(new KeyAdapter() {
 	        public void keyTyped(KeyEvent e) {
@@ -284,7 +310,7 @@ public class MainUI {
 	          }
 	        });
 		txtPort.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		txtPort.setBounds(156, 90, 107, 20);
+		txtPort.setBounds(156, 104, 155, 32);
 		panelLogin.add(txtPort);
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
