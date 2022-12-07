@@ -118,9 +118,6 @@ public class MainUI {
 			panelLogin.setVisible(false);
 			panelChat.setVisible(true);
 		}
-		catch (CannotProceedException e) {
-			JOptionPane.showMessageDialog(frame,e.getMessage());
-		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(frame,"Lỗi mở Port: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
 			System.out.println();

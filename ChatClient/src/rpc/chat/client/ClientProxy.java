@@ -60,7 +60,7 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void login(IClient client) throws CannotProceedException {
+	public void login(IClient client)  {
 		  InetAddress localHost;
 		try {
 			localHost = InetAddress.getLocalHost();
