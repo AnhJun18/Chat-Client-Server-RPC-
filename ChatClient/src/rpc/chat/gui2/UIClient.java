@@ -46,6 +46,7 @@ public class UIClient {
 	int num=0;
 	private JFrame frame;
 	boolean isOpen=false;
+	boolean isConnect=false;
 	public static String serverIP="169.254.22.126";
 	public static int serverPort=8080;
 
@@ -113,23 +114,29 @@ public class UIClient {
 					return new ClientSideServerProxy(inputStream, outputStream, myClient);
 				}
 			});
-			Thread ab=new Thread(rpc);ab.start();
+			(new Thread(rpc)).start();
 			isOpen=true;
 			clientP = new ClientProxy(serverIP, serverPort, rpc);
 			}
-		
 		    clientP.login(myClient);
 		    ScreenChat();
 			listenForMessages();
 			panelLogin.setVisible(false);
 			panelChat.setVisible(true);
+			isConnect=true;
 		}catch (NameAlreadyBoundException e) {
 			JOptionPane.showMessageDialog(frame,e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(frame,"Lỗi Port đã được sử dụng: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+			if(!isOpen) {
+				JOptionPane.showMessageDialog(frame,"Lỗi Port đã được sử dụng: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				  JOptionPane.showMessageDialog(frame,"Lỗi kết nối với server! ","ERROR",JOptionPane.ERROR_MESSAGE);
+			}
+			
+			
 		}
-		
 	}
 	public void listenForMessages(){
         new Thread(new Runnable() {
@@ -310,7 +317,7 @@ public class UIClient {
 		frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-            	if(isOpen) {
+            	if(isOpen && isConnect) {
             		clientP.logout(myClient);		
             	}
             	

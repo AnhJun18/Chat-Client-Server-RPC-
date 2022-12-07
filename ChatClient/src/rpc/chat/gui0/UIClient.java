@@ -1,4 +1,4 @@
-package rpc.chat.gui;
+package rpc.chat.gui0;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -108,7 +108,7 @@ public class UIClient {
 		try {
 			myClient = new Client(name);
 			if (!isOpen) {
-				RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
+				RPCRuntime rpc = new RPCRuntime(new ServerSocket(6666));
 				rpc.register("ChatClient", new IProxyFactory() {
 					@Override
 					public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
@@ -257,7 +257,7 @@ public class UIClient {
 
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listPanel.get(mode).setText(listPanel.get(mode).getText() + "\n " + "Gửi: " + textMsg.getText());
+				listPanel.get(mode).setText(listPanel.get(mode).getText() + "\n" + "Gửi: " + textMsg.getText());
 				// Create a animator scroll
 				clientP.broadcast(textMsg.getText(), myClient, mode);
 				textMsg.setText(null);
