@@ -47,7 +47,7 @@ public class UIClient {
 	public static int serverPort = 8080;
 	boolean isConnect = false;
 	private JScrollPane scrollPane;
-	private scrollChat scrollAnimator;
+	
 
 	// private boolean isLogin=false;
 	/**
@@ -251,7 +251,6 @@ public class UIClient {
 
 			}
 		});
-	 scrollAnimator = new scrollChat(scrollPane);
 		comboBox.setBounds(37, 29, 77, 44);
 		frame.getContentPane().add(comboBox);
 
