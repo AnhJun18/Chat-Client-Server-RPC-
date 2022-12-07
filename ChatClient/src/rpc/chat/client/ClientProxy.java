@@ -3,7 +3,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+
+import javax.naming.CannotProceedException;
 
 import rpc.chat.interfaces.IClient;
 import rpc.chat.interfaces.IServer;
@@ -56,7 +60,15 @@ public class ClientProxy implements IServer {
 	}
 
 	@Override
-	public void login(IClient client) {
+	public void login(IClient client)  {
+		  InetAddress localHost;
+		try {
+			localHost = InetAddress.getLocalHost();
+			   System.out.println(localHost.getHostAddress());
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+	     
 		output.println("2");
 		output.flush();
 		try {

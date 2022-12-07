@@ -14,10 +14,8 @@ public class ServerSideClientProxy implements IClient {
 
 	public ServerSideClientProxy(String host, int port) throws Exception {
 		socket = new Socket(host, port);
-
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		output = new PrintWriter(socket.getOutputStream());
-		
 		int size = Integer.parseInt(input.readLine());
 
 		for (int i = 0; i < size; i++) {
