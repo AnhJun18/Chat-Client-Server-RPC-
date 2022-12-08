@@ -10,6 +10,8 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Hashtable;
 
 import javax.naming.NameAlreadyBoundException;
@@ -25,10 +27,16 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
+import net.miginfocom.swing.MigLayout;
 import rpc.chat.client.Client;
 import rpc.chat.client.ClientProxy;
 import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
+import rpc.chat.gui.component.AnimationScroll;
+import rpc.chat.gui.component.ChatBox;
+import rpc.chat.gui.component.ModelMessage;
+import rpc.chat.gui.component.RoundPanel;
+import rpc.chat.gui.component.ChatBox.BoxType;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory;
 
@@ -36,7 +44,7 @@ public class UIClient {
 	private JPanel panelLogin;
 	private JPanel panelChat;
 	private ClientProxy clientP;
-	Hashtable<String, JTextArea> listPanel = new Hashtable<String, JTextArea>();
+	Hashtable<String, JPanel> listPanel = new Hashtable<String, JPanel>();
 	private JComboBox<String> comboBox;
 	private Client myClient;
 	String mode = "ALL";
@@ -47,8 +55,8 @@ public class UIClient {
 	public static int serverPort = 8080;
 	boolean isConnect = false;
 	private JScrollPane scrollPane;
-	
-
+	 private AnimationScroll animationScroll;
+	 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mmaa");
 	// private boolean isLogin=false;
 	/**
 	 * Launch the application.
@@ -72,10 +80,8 @@ public class UIClient {
 	 * @throws Exception
 	 */
 	public UIClient() throws Exception {
-		// this.isLogin = false;
 		initialize();
-		 panellogin();
-		//ScreenChat();
+		panellogin();
 	}
 
 	/**
@@ -88,19 +94,12 @@ public class UIClient {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-//    public void actionPerformed(ActionEvent e) throws Exception, Exception {
-//    	 if(UiLogin.getIsLogin()) {
-//    		 UiLogin.getJpanel().setVisible(false);
-//    		 UiClient.run(UiLogin.getUserName(),Integer.parseInt(UiLogin.getPort()));
-//    		 frame.add(UiClient.getScreen()).setVisible(true);;
-//    	 }
-//    }
-
+	
 	private void addPanel(String name) {
-		JTextArea panel_chat_new = new JTextArea();
-		panel_chat_new.setBounds(0, 44, 448, 1000);
-		panel_chat_new.setLayout(null);
-		listPanel.put(name, panel_chat_new);
+		RoundPanel panel = new RoundPanel();
+		panel.setBackground(new Color(0, 0, 0, 0));
+		panel.setLayout(new MigLayout("wrap,fillx"));
+		listPanel.put(name, panel);
 	}
 
 	public void run(String name) throws Exception {
@@ -148,10 +147,13 @@ public class UIClient {
 							if (!listPanel.containsKey(sender)) {
 								addPanel(sender);
 							}
-							listPanel.get(sender).setText(listPanel.get(sender).getText() + "\n" + "REP: " + myClient.getMsg());
-							scrollPane.repaint();
+							listPanel.get(sender).add(new ChatBox(BoxType.LEFT, new ModelMessage(sender,df.format(new Date()), myClient.getMsg())),"width ::80%");
+							
+							listPanel.get(sender).repaint();
+							listPanel.get(sender).revalidate();
+							if(mode.equals(sender))
+								animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
 							myClient.setNewMsg(false);
-							listPanel.get(sender).setCaretPosition(listPanel.get(sender).getDocument().getLength());	
 						}
 						if (myClient.getNewMember()) {
 							isupdate = true;
@@ -217,18 +219,24 @@ public class UIClient {
 		scrollPane.setBounds(0, 51, 448, 237);
 		panelChat.add(scrollPane);
 
+		animationScroll = new AnimationScroll(panelChat);
+		RoundPanel panel = new RoundPanel();
+		panel.setBackground(new Color(0, 0, 0, 0));
+		panel.setLayout(new MigLayout("wrap,fillx"));
+
 		JTextArea chatArea = new JTextArea();
 		chatArea.setLineWrap(true);
 		chatArea.setEditable(false);
-		scrollPane.setViewportView(chatArea);
+		scrollPane.setViewportView(panel);
 		// Configuration for chatArea
 		chatArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		listPanel.put("ALL", chatArea);
+		listPanel.put("ALL", panel);
 
 		JLabel lblNewLabel_1 = new JLabel(myClient.getName());
 		lblNewLabel_1.setBounds(99, 0, 231, 34);
 		panelChat.add(lblNewLabel_1);
 		comboBox = new JComboBox<String>();
+
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (isupdate == false) {
@@ -241,26 +249,28 @@ public class UIClient {
 						listPanel.get(mode).repaint();
 					} else {
 						listPanel.get(mode).setVisible(true);
-						scrollPane.setViewportView(listPanel.get(mode));
-						System.out.println(listPanel.get(mode).getDocument().getLength());
+						scrollPane.setViewportView(listPanel.get(mode)); //
 						listPanel.get(mode).repaint();
-						listPanel.get(mode).setCaretPosition(listPanel.get(mode).getDocument().getLength());
-
 					}
 				}
 
 			}
 		});
+
 		comboBox.setBounds(37, 29, 77, 44);
 		frame.getContentPane().add(comboBox);
 
 		btnNewButton.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
-				listPanel.get(mode).setText(listPanel.get(mode).getText() + "\n " + "Gửi: " + textMsg.getText());
+
+				listPanel.get(mode).add(new ChatBox(BoxType.RIGHT, new ModelMessage("",df.format(new Date()),textMsg.getText() )),"al right,width ::80%");
+				listPanel.get(mode).repaint();
+				listPanel.get(mode).revalidate();
+				animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
 				// Create a animator scroll
 				clientP.broadcast(textMsg.getText(), myClient, mode);
 				textMsg.setText(null);
-				listPanel.get(mode).setCaretPosition(listPanel.get(mode).getDocument().getLength());
 			}
 		});
 
