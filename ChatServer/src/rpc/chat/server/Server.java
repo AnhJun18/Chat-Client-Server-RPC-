@@ -1,5 +1,7 @@
 package rpc.chat.server;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +21,10 @@ public class Server implements IServer {
 		if (receiver.equals("ALL")) {
 			for (IClient iClient : clients) {
 				try {
-					if (!iClient.getName().equals(client.getName()))
-						iClient.receive("ALL" + ":"+ client.getName()+":"+ msg);
-				} catch (Exception e) {
+					if (!iClient.getName().equals(client.getName())) {
+						String a= URLEncoder.encode(msg,"UTF-8");
+						iClient.receive("ALL" + ":"+ client.getName()+":"+ a);
+				}} catch (Exception e) {
 					this.logout(iClient);
 				}
 			}

@@ -27,9 +27,8 @@ public class ServerProxy implements Runnable, IProxy {
 			out.println("Nhap tin nhan: ");
 			out.flush();
 			String msg = in.readLine();
-			String msgDecode = URLDecoder.decode(msg, "UTF-8");
 			String receiver = in.readLine();
-			server.broadcast(msgDecode, lc,receiver);
+			server.broadcast(msg, lc,receiver);
 			out.println("200 - Success");
 		} catch (Exception e) {
 			

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 import javax.naming.NameAlreadyBoundException;
 
@@ -24,7 +25,7 @@ public class ClientProxy implements IServer {
 		socket = new Socket(host, port);
 
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		output = new PrintWriter(socket.getOutputStream());
+		output = new PrintWriter(socket.getOutputStream(),false,StandardCharsets.UTF_8);
 		int size = Integer.parseInt(input.readLine());
 
 		for (int i = 0; i < size; i++) {

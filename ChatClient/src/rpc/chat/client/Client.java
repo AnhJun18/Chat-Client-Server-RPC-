@@ -1,4 +1,7 @@
 package rpc.chat.client;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import rpc.chat.interfaces.IClient;
 
 public class Client implements IClient {
@@ -23,7 +26,10 @@ public class Client implements IClient {
 	}
 	@Override
 	public void receive(String msg) {
-		this.msg=msg;
+		try {
+			this.msg=URLDecoder.decode(msg,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+		}
 		setNewMsg(true);
 	}
 	

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import rpc.chat.interfaces.IClient;
 
@@ -15,7 +16,7 @@ public class ServerSideClientProxy implements IClient {
 	public ServerSideClientProxy(String host, int port) throws Exception {
 		socket = new Socket(host, port);
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		output = new PrintWriter(socket.getOutputStream());
+		output = new PrintWriter(socket.getOutputStream(),false,StandardCharsets.UTF_8);
 		int size = Integer.parseInt(input.readLine());
 
 		for (int i = 0; i < size; i++) {
