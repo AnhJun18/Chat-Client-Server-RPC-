@@ -6,8 +6,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/PC/Desktop/lib/TimingFramework-0.55.jar"/>
-	<classpathentry kind="lib" path="/java-swing-ui-chat-messenger-main/lib/gradient-icon-font.jar"/>
-	<classpathentry kind="lib" path="/java-swing-ui-chat-messenger-main/lib/miglayout-4.0.jar"/>
+	<classpathentry kind="src" path="lib"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
+	<classpathentry kind="lib" path="lib/TimingFramework-0.55.jar"/>
+	<classpathentry kind="lib" path="lib/gradient-icon-font.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
