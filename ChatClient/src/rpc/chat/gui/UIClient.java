@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -83,6 +85,7 @@ public class UIClient {
 	public UIClient() throws Exception {
 		initialize();
 		panellogin();
+		//ScreenChat();
 	}
 
 	/**
@@ -148,13 +151,18 @@ public class UIClient {
 							if (!listPanel.containsKey(sender)) {
 								addPanel(sender);
 							}
-							System.out.println(myClient.getMsg());
+
 							if (sender.equals("ALL")) {
-								listPanel
-										.get(sender).add(
-												new ChatBox(BoxType.LEFT, new ModelMessage(myClient.getMsg().split(":")[1],
-														df.format(new Date()), myClient.getMsg().split(":")[2])),
-												"width ::80%");
+								try {
+									listPanel.get(sender).add(
+											new ChatBox(BoxType.LEFT,
+													new ModelMessage(myClient.getMsg().split(":")[1],
+															df.format(new Date()), myClient.getMsg().split(":")[2])),
+											"width ::80%");
+								} catch (Exception e) {
+
+								}
+
 							} else {
 								listPanel
 										.get(sender).add(
@@ -219,6 +227,23 @@ public class UIClient {
 		frame.getContentPane().add(panelChat);
 
 		JTextPane textMsg = new JTextPane();
+		textMsg.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==10) {
+					if (!textMsg.getText().trim().isEmpty() && !textMsg.getText().trim().isBlank()) {
+						listPanel.get(mode).add(
+								new ChatBox(BoxType.RIGHT, new ModelMessage("", df.format(new Date()), textMsg.getText())),
+								"al right,width ::80%");
+						listPanel.get(mode).repaint();
+						listPanel.get(mode).revalidate();
+						animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
+						clientP.broadcast(textMsg.getText(), myClient, mode);
+						textMsg.setText(null);
+					}
+					e.consume();
+				}}
+		});
 		textMsg.setBounds(39, 344, 267, 33);
 		panelChat.add(textMsg);
 
@@ -279,18 +304,20 @@ public class UIClient {
 		btnSend.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-
-				listPanel.get(mode).add(
-						new ChatBox(BoxType.RIGHT, new ModelMessage("", df.format(new Date()), textMsg.getText())),
-						"al right,width ::80%");
-				listPanel.get(mode).repaint();
-				listPanel.get(mode).revalidate();
-				animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
-				// Create a animator scroll
-				clientP.broadcast(textMsg.getText(), myClient, mode);
-				textMsg.setText(null);
+				if (!textMsg.getText().trim().isEmpty() && !textMsg.getText().trim().isBlank()) {
+					listPanel.get(mode).add(
+							new ChatBox(BoxType.RIGHT, new ModelMessage("", df.format(new Date()), textMsg.getText())),
+							"al right,width ::80%");
+					listPanel.get(mode).repaint();
+					listPanel.get(mode).revalidate();
+					animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
+					clientP.broadcast(textMsg.getText(), myClient, mode);
+					textMsg.setText(null);
+				}
 			}
 		});
+		
+		
 
 	}
 
