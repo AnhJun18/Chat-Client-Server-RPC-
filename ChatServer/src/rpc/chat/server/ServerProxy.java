@@ -2,6 +2,7 @@ package rpc.chat.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 
 import javax.naming.NameAlreadyBoundException;
 
@@ -26,8 +27,9 @@ public class ServerProxy implements Runnable, IProxy {
 			out.println("Nhap tin nhan: ");
 			out.flush();
 			String msg = in.readLine();
+			String msgDecode = URLDecoder.decode(msg, "UTF-8");
 			String receiver = in.readLine();
-			server.broadcast(msg, lc,receiver);
+			server.broadcast(msgDecode, lc,receiver);
 			out.println("200 - Success");
 		} catch (Exception e) {
 			

@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 
 import javax.naming.NameAlreadyBoundException;
@@ -47,7 +48,8 @@ public class ClientProxy implements IServer {
 		try {
 
 			input.readLine();
-			output.println(msg);
+			String msgEncode = URLEncoder.encode(msg, "UTF-8");
+			output.println(msgEncode);
 			output.println(receiver);
 			output.flush();
 			

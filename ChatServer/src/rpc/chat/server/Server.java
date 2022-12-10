@@ -15,6 +15,7 @@ public class Server implements IServer {
 	/* Phát tin */
 	@Override
 	public void broadcast(String msg, IClient client, String receiver) {
+		System.out.println(client.getName()+"to "+receiver+": "+msg);
 		if (receiver.equals("ALL")) {
 			for (IClient iClient : clients) {
 				try {
