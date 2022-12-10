@@ -43,6 +43,10 @@ import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory;
 
 public class UIClient {
+	public static String serverIP = "169.254.22.126";
+	public static int serverPort = 8080;
+	private static int clientPort=3535;
+	
 	private JPanel panelLogin;
 	private JPanel panelChat;
 	private ClientProxy clientP;
@@ -53,14 +57,11 @@ public class UIClient {
 	boolean isupdate = false;
 	private JFrame frame;
 	boolean isOpen = false;
-	public static String serverIP = "169.254.22.126";
-	public static int serverPort = 8080;
 	boolean isConnect = false;
 	private JScrollPane scrollPane;
 	private AnimationScroll animationScroll;
 	SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mmaa");
 
-	// private boolean isLogin=false;
 	/**
 	 * Launch the application.
 	 */
@@ -111,7 +112,7 @@ public class UIClient {
 		try {
 			myClient = new Client(name);
 			if (!isOpen) {
-				RPCRuntime rpc = new RPCRuntime(new ServerSocket(3535));
+				RPCRuntime rpc = new RPCRuntime(new ServerSocket(clientPort));
 				rpc.register("ChatClient", new IProxyFactory() {
 					@Override
 					public IProxy createProxy(BufferedReader inputStream, PrintWriter outputStream) {
