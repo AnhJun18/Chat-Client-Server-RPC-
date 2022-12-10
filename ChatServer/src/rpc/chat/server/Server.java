@@ -1,7 +1,5 @@
 package rpc.chat.server;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +15,12 @@ public class Server implements IServer {
 	/* Phát tin */
 	@Override
 	public void broadcast(String msg, IClient client, String receiver) {
-		System.out.println(client.getName()+"to "+receiver+": "+msg);
+		System.out.println(client.getName()+" to "+receiver+": "+msg);
 		if (receiver.equals("ALL")) {
 			for (IClient iClient : clients) {
 				try {
 					if (!iClient.getName().equals(client.getName())) {
-						String a= URLEncoder.encode(msg,"UTF-8");
-						iClient.receive("ALL" + ":"+ client.getName()+":"+ a);
+						iClient.receive("ALL" + ":"+ client.getName()+":"+ msg);
 				}} catch (Exception e) {
 					this.logout(iClient);
 				}

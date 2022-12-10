@@ -36,9 +36,9 @@ import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
 import rpc.chat.component.AnimationScroll;
 import rpc.chat.component.ChatBox;
+import rpc.chat.component.ChatBox.BoxType;
 import rpc.chat.component.ModelMessage;
 import rpc.chat.component.RoundPanel;
-import rpc.chat.component.ChatBox.BoxType;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory;
 

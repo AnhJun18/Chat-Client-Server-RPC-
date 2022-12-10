@@ -2,7 +2,6 @@ package rpc.chat.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
 
 import javax.naming.NameAlreadyBoundException;
 
