@@ -1,4 +1,4 @@
-package rpc.chat.gui.component;
+package rpc.chat.component;
 
 import java.awt.Component;
 import javax.swing.JScrollPane;

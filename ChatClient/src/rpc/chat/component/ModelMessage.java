@@ -1,4 +1,4 @@
-package rpc.chat.gui.component;
+package rpc.chat.component;
 
 public class ModelMessage {
 

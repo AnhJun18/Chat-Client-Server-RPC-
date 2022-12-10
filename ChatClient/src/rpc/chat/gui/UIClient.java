@@ -32,11 +32,11 @@ import rpc.chat.client.Client;
 import rpc.chat.client.ClientProxy;
 import rpc.chat.client.ClientSideServerProxy;
 import rpc.chat.client.RPCRuntime;
-import rpc.chat.gui.component.AnimationScroll;
-import rpc.chat.gui.component.ChatBox;
-import rpc.chat.gui.component.ModelMessage;
-import rpc.chat.gui.component.RoundPanel;
-import rpc.chat.gui.component.ChatBox.BoxType;
+import rpc.chat.component.AnimationScroll;
+import rpc.chat.component.ChatBox;
+import rpc.chat.component.ModelMessage;
+import rpc.chat.component.RoundPanel;
+import rpc.chat.component.ChatBox.BoxType;
 import rpc.chat.interfaces.IProxy;
 import rpc.chat.interfaces.IProxyFactory;
 
@@ -55,8 +55,9 @@ public class UIClient {
 	public static int serverPort = 8080;
 	boolean isConnect = false;
 	private JScrollPane scrollPane;
-	 private AnimationScroll animationScroll;
-	 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mmaa");
+	private AnimationScroll animationScroll;
+	SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mmaa");
+
 	// private boolean isLogin=false;
 	/**
 	 * Launch the application.
@@ -94,7 +95,7 @@ public class UIClient {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	private void addPanel(String name) {
 		RoundPanel panel = new RoundPanel();
 		panel.setBackground(new Color(0, 0, 0, 0));
@@ -147,12 +148,27 @@ public class UIClient {
 							if (!listPanel.containsKey(sender)) {
 								addPanel(sender);
 							}
-							listPanel.get(sender).add(new ChatBox(BoxType.LEFT, new ModelMessage(sender,df.format(new Date()), myClient.getMsg())),"width ::80%");
-							
+							System.out.println(myClient.getMsg());
+							if (sender.equals("ALL")) {
+								listPanel
+										.get(sender).add(
+												new ChatBox(BoxType.LEFT, new ModelMessage(myClient.getMsg().split(":")[1],
+														df.format(new Date()), myClient.getMsg().split(":")[2])),
+												"width ::80%");
+							} else {
+								listPanel
+										.get(sender).add(
+												new ChatBox(BoxType.LEFT, new ModelMessage(sender,
+														df.format(new Date()), myClient.getMsg().split(":")[1])),
+												"width ::80%");
+
+							}
+
 							listPanel.get(sender).repaint();
 							listPanel.get(sender).revalidate();
-							if(mode.equals(sender))
-								animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());
+							if (mode.equals(sender))
+								animationScroll.scrollVertical(scrollPane,
+										scrollPane.getVerticalScrollBar().getMaximum());
 							myClient.setNewMsg(false);
 						}
 						if (myClient.getNewMember()) {
@@ -206,10 +222,10 @@ public class UIClient {
 		textMsg.setBounds(39, 344, 267, 33);
 		panelChat.add(textMsg);
 
-		JButton btnNewButton = new JButton("Send");
+		JButton btnSend = new JButton("Send");
 
-		btnNewButton.setBounds(316, 344, 96, 33);
-		panelChat.add(btnNewButton);
+		btnSend.setBounds(316, 344, 96, 33);
+		panelChat.add(btnSend);
 
 		// Create a scrollPane model
 		scrollPane = new JScrollPane();
@@ -260,11 +276,13 @@ public class UIClient {
 		comboBox.setBounds(37, 29, 77, 44);
 		frame.getContentPane().add(comboBox);
 
-		btnNewButton.addActionListener(new ActionListener() {
+		btnSend.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 
-				listPanel.get(mode).add(new ChatBox(BoxType.RIGHT, new ModelMessage("",df.format(new Date()),textMsg.getText() )),"al right,width ::80%");
+				listPanel.get(mode).add(
+						new ChatBox(BoxType.RIGHT, new ModelMessage("", df.format(new Date()), textMsg.getText())),
+						"al right,width ::80%");
 				listPanel.get(mode).repaint();
 				listPanel.get(mode).revalidate();
 				animationScroll.scrollVertical(scrollPane, scrollPane.getVerticalScrollBar().getMaximum());

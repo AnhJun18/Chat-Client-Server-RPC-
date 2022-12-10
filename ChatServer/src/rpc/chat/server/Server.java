@@ -19,7 +19,7 @@ public class Server implements IServer {
 			for (IClient iClient : clients) {
 				try {
 					if (!iClient.getName().equals(client.getName()))
-						iClient.receive("ALL" + ": " + msg);
+						iClient.receive("ALL" + ":"+ client.getName()+":"+ msg);
 				} catch (Exception e) {
 					this.logout(iClient);
 				}
