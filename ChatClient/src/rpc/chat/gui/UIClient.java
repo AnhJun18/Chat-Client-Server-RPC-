@@ -307,7 +307,7 @@ public class UIClient {
 			public void actionPerformed(ActionEvent e) {
 				if (!textMsg.getText().trim().isEmpty() && !textMsg.getText().trim().isBlank()) {
 					listPanel.get(mode).add(
-							new ChatBox(BoxType.RIGHT, new ModelMessage("", df.format(new Date()), textMsg.getText())),
+							new ChatBox(BoxType.RIGHT, new ModelMessage("Me", df.format(new Date()), textMsg.getText())),
 							"al right,width ::80%");
 					listPanel.get(mode).repaint();
 					listPanel.get(mode).revalidate();
