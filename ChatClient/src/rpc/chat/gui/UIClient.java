@@ -146,7 +146,7 @@ public class UIClient {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(500);
+						Thread.sleep(100);
 						if (myClient.getNewMsg()) {
 							String sender = myClient.getMsg().split(":")[0];
 							if (!listPanel.containsKey(sender)) {

@@ -49,8 +49,7 @@ public class Server implements IServer {
 				throw new NameAlreadyBoundException();
 			}
 		clients.add(client);
-		eventLog = client.getName() + " - " + ((ServerSideClientProxy) client).socket.getLocalAddress()
-				+ " đã đăng nhập";
+		eventLog = client.getName() + " - " + ((ServerSideClientProxy) client).socket.getInetAddress().getHostAddress()+ " đã đăng nhập";
 		isNewLog = true;
 	}
 
@@ -69,8 +68,7 @@ public class Server implements IServer {
 	@Override
 	public void logout(IClient client) {
 		clients.remove(client);
-		eventLog = client.getName() + " - " + ((ServerSideClientProxy) client).socket.getLocalAddress()
-				+ " đã đăng xuất";
+		eventLog = client.getName() + " - " + ((ServerSideClientProxy) client).socket.getInetAddress().getHostAddress()+ " đã đăng xuất";
 		isNewLog = true;
 
 	}

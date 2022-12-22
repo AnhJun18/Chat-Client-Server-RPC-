@@ -102,7 +102,7 @@ public class UIServer {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(500);
+						Thread.sleep(100);
 						if (myServer.isNew()) {
 							panelServer.add(
 									new ChatBox(BoxType.LEFT,
