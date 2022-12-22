@@ -1,4 +1,5 @@
 package rpc.chat.server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +19,7 @@ public class ServerProxy implements Runnable, IProxy {
 		this.server = (Server) server;
 		this.in = in;
 		this.out = out;
-	
+
 	}
 
 	private void broadcast() {
@@ -27,15 +28,15 @@ public class ServerProxy implements Runnable, IProxy {
 			out.flush();
 			String msg = in.readLine();
 			String receiver = in.readLine();
-			server.broadcast(msg, lc,receiver);
+			server.broadcast(msg, lc, receiver);
 			out.println("200 - Success");
 		} catch (Exception e) {
-			
+
 			out.println("500 - Internal Server Error");
 			out.println(e.getMessage());
-			
+
 		}
-		
+
 		out.flush();
 	}
 
@@ -44,24 +45,24 @@ public class ServerProxy implements Runnable, IProxy {
 		out.flush();
 		String IP = in.readLine();
 		System.out.println("IP: " + IP);
-		
+
 		out.println("Nhap Port:");
 		out.flush();
 		int port = Integer.parseInt(in.readLine());
 		System.out.println("Port: " + port);
-		
+
 		try {
 			lc = new ServerSideClientProxy(IP, port);
 			server.login(lc);
 			out.println("200 - Success");
-			
-		}catch (NameAlreadyBoundException e) {
+
+		} catch (NameAlreadyBoundException e) {
 			out.println("201 - Name Already");
 		} catch (Exception e) {
-			
+
 			out.println("500 - Internal Server Error");
 			out.println(e.getClass().getName());
-			
+
 		}
 		out.flush();
 		server.updateMember();
@@ -69,17 +70,16 @@ public class ServerProxy implements Runnable, IProxy {
 
 	private void logout() throws IOException {
 		try {
-			
+
 			server.logout(lc);
 			out.println("200 - Success");
-			
+
 		} catch (Exception e) {
-			
+
 			out.println("500 - Internal Server Error");
 			out.println(e.getMessage());
-			
+
 		}
-		
 		out.flush();
 		server.updateMember();
 		running = false;
